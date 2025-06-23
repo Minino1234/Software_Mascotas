@@ -11,12 +11,40 @@
     <div class="overlay"></div>
     <div class="login-box">
       <h2>Iniciar Sesión</h2>
-      <form>
-        <input type="text" placeholder="Usuario" required />
-        <input type="password" placeholder="Contraseña" required />
-        <button type="submit">Ingresar</button>
-      </form>
+      <form id="loginForm">
+  <input type="text" name="usuario" placeholder="Usuario" required />
+  <input type="password" name="clave" placeholder="Contraseña" required />
+  <button type="submit">Ingresar</button>
+</form>
+
+<div id="mensaje"></div>
+
+<script>
+  const form = document.getElementById("loginForm");
+  const mensaje = document.getElementById("mensaje");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const datos = new FormData(form);
+
+    const res = await fetch("login.php", {
+      method: "POST",
+      body: datos,
+    });
+
+    const texto = await res.text();
+
+    if (texto.trim() === "success") {
+      window.location.href = "interfaz.html"; // CAMBIA ESTO A TU INTERFAZ
+    } else {
+      mensaje.innerHTML = `<p style="color:red;">${texto}</p>`;
+    }
+  });
+</script>
     </div>
   </div>
 </body>
 </html>
+
+
