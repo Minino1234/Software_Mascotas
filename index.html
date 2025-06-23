@@ -36,7 +36,7 @@
     const texto = await res.text();
 
     if (texto.trim() === "success") {
-      window.location.href = "interfaz.html"; // CAMBIA ESTO A TU INTERFAZ
+      window.location.href = "main_menu.html"; // CAMBIA ESTO A TU INTERFAZ
     } else {
       mensaje.innerHTML = `<p style="color:red;">${texto}</p>`;
     }

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Menú Principal</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .main-title {
+      font-size: 3rem;
+      color: white;
+      margin-bottom: 30px;
+      text-shadow: 2px 2px 5px #000;
+    }
+
+    .menu-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+
+    .menu-button {
+      background-color: rgba(255, 255, 255, 0.9);
+      width: 150px;
+      height: 150px;
+      border-radius: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      text-decoration: none;
+      color: #003366;
+      font-weight: bold;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      transition: transform 0.2s, background-color 0.2s;
+    }
+
+    .menu-button:hover {
+      transform: scale(1.05);
+      background-color: #e0f0ff;
+    }
+
+    .menu-button img {
+      width: 50px;
+      height: 50px;
+      margin-bottom: 10px;
+    }
+
+    .center-box {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="background">
+    <div class="overlay"></div>
+    <div class="center-box">
+        <img src="imagenes/logo2muni.png" alt="Logo" style="width:450px; height:auto; margin-bottom: 
+        20px;" />
+      <div class="main-title">Sub-Gerencia de Sanidad y Salubridad Pública</div>
+<!-- box-shadow: 5px 5px 15px rgba(100, 0, 0, 0.5) --> 
+      <div class="menu-buttons">
+        <a href="pestana1.html" class="menu-button" target="_blank">
+          <img src="img1.png" alt="Icono 1" />
+          Botón 1
+        </a>
+        <a href="pestana2.html" class="menu-button" target="_blank">
+          <img src="img2.png" alt="Icono 2" />
+          Botón 2
+        </a>
+        <a href="pestana3.html" class="menu-button" target="_blank">
+          <img src="img3.png" alt="Icono 3" />
+          Botón 3
+        </a>
+        <a href="pestana4.html" class="menu-button" target="_blank">
+          <img src="img4.png" alt="Icono 4" />
+          Botón 4
+        </a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
