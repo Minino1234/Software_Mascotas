@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+   <link rel="stylesheet" href="styles.css" />
+  <title>Registrar Persona</title>
+  <style>
+    .container {
+      background-color: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      max-width: 600px;
+      margin: auto;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+<body>
+    <body>
+  <div class="background">
+    <div class="overlay"></div>
+  <div class="container">
+    <img src="imagenes/logo2muni.png" alt="Logo" style="width:450px; height:auto; margin-bottom: 
+        20px;" />
+    <h2>Registrar Persona</h2>
+
+    <form id="formPersona" enctype="multipart/form-data">
+      <label>Nombres:</label>
+      <input type="text" name="nombres" required>
+
+      <label>Apellidos:</label>
+      <input type="text" name="apellidos" required>
+
+      <label>Teléfono:</label>
+      <input type="tel" name="telefono" required>
+
+      <label>Género:</label>
+      <select name="genero" required>
+        <option value="">Seleccione</option>
+        <option value="Masculino">Masculino</option>
+        <option value="Femenino">Femenino</option>
+      </select>
+
+      <div class="opciones">
+        <label>Rol:</label>
+        <input type="radio" name="rol" value="propietario" id="propietario"> Propietario
+        <input type="radio" name="rol" value="veterinario" id="veterinario"> Veterinario
+      </div>
+
+      <!-- Sección Propietario -->
+      <div id="datosPropietario" class="hidden">
+        <label>Dirección:</label>
+        <input type="text" name="direccion">
+
+        <label>Barrio:</label>
+        <select name="barrio" id="barrioSelect">
+          <option value="">Cargando barrios...</option>
+        </select>
+      </div>
+
+      <!-- Sección Veterinario -->
+      <div id="datosVeterinario" class="hidden">
+        <label>Fecha de contratación:</label>
+        <input type="date" name="fecha_contratacion">
+
+        <label>Fecha de término:</label>
+        <input type="date" name="fecha_termino">
+
+        <label>Contrato (PDF):</label>
+        <input type="file" name="contrato" accept="application/pdf">
+      </div>
+
+      <button type="submit" class="boton">Guardar</button>
+    </form>
+  </div>
+
+  <script>
+    const rolRadios = document.querySelectorAll('input[name="rol"]');
+    const datosProp = document.getElementById('datosPropietario');
+    const datosVet = document.getElementById('datosVeterinario');
+
+    rolRadios.forEach(radio => {
+      radio.addEventListener('change', () => {
+        if (radio.value === 'propietario') {
+          datosProp.classList.remove('hidden');
+          datosVet.classList.add('hidden');
+        } else {
+          datosVet.classList.remove('hidden');
+          datosProp.classList.add('hidden');
+        }
+      });
+    });
+
+    // Obtener barrios desde PHP
+    fetch('obtener_barrios.php')
+      .then(res => res.json())
+      .then(data => {
+        const barrioSelect = document.getElementById('barrioSelect');
+        barrioSelect.innerHTML = '<option value="">Seleccione un barrio</option>';
+        data.forEach(barrio => {
+          let opt = document.createElement('option');
+          opt.value = barrio;
+          opt.textContent = barrio;
+          barrioSelect.appendChild(opt);
+        });
+      });
+  </script>
+</body>
+</html>
+
