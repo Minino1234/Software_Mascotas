@@ -22,7 +22,7 @@ switch ($accion) {
         $lugar = $_POST['lugar'] ?? '';
         $fecha = $_POST['fecha'] ?? '';
         if ($lugar && $fecha) {
-            $stmt = $conn->prepare("INSERT INTO campanas (`lugar_campaña`, `fecha_campaña`) VALUES (?, ?)");
+            $stmt = $conn->prepare("INSERT INTO campañas (`lugar_campaña`, `fecha_campaña`) VALUES (?, ?)");
             if ($stmt === false) {
                 echo "<p class='mensaje'>❌ Error en prepare: " . htmlspecialchars($conn->error) . "</p>";
                 break;
@@ -44,7 +44,7 @@ switch ($accion) {
         $lugar = $_POST['lugar'] ?? '';
         $fecha = $_POST['fecha'] ?? '';
         if ($id > 0 && $lugar && $fecha) {
-            $stmt = $conn->prepare("UPDATE campanas SET `lugar_campaña` = ?, `fecha_campaña` = ? WHERE idCampanas = ?");
+            $stmt = $conn->prepare("UPDATE campañas SET `lugar_campaña` = ?, `fecha_campaña` = ? WHERE idCampañas = ?");
             if ($stmt === false) {
                 echo "<p class='mensaje'>❌ Error en prepare: " . htmlspecialchars($conn->error) . "</p>";
                 break;
@@ -64,7 +64,7 @@ switch ($accion) {
     case 'eliminar':
         $id = intval($_POST['id'] ?? 0);
         if ($id > 0) {
-            $stmt = $conn->prepare("DELETE FROM campanas WHERE idCampanas = ?");
+            $stmt = $conn->prepare("DELETE FROM campañas WHERE idCampañas = ?");
             if ($stmt === false) {
                 echo "<p class='mensaje'>❌ Error en prepare: " . htmlspecialchars($conn->error) . "</p>";
                 break;
@@ -82,12 +82,12 @@ switch ($accion) {
         break;
 
     case 'listar':
-        $result = $conn->query("SELECT * FROM campanas ORDER BY idCampanas ASC");
+        $result = $conn->query("SELECT * FROM campañas ORDER BY idCampañas ASC");
         if ($result && $result->num_rows > 0) {
             echo "<h2>📋 Lista de campañas</h2>";
             echo "<table><tr><th>ID</th><th>Lugar</th><th>Fecha</th></tr>";
             while ($row = $result->fetch_assoc()) {
-                $id = htmlspecialchars($row['idCampanas']);
+                $id = htmlspecialchars($row['idCampañas']);
                 $lugar = htmlspecialchars($row['lugar_campaña']);
                 $fecha = htmlspecialchars($row['fecha_campaña']);
                 echo "<tr><td>$id</td><td>$lugar</td><td>$fecha</td></tr>";
