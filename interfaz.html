@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gestión de Campañas</title>
+  <link rel="stylesheet" href="estilo_campaña.css" />
+</head>
+<body>
+
+<h1>Gestión de Campañas</h1>
+
+<!-- FORMULARIO PARA CREAR CAMPAÑA -->
+<div class="seccion">
+  <h2>Crear Campaña</h2>
+  <form action="logica.php" method="POST">
+    <input type="hidden" name="accion" value="crear" />
+    <label for="lugar">Lugar:</label><br />
+    <input type="text" id="lugar" name="lugar" required /><br /><br />
+
+    <label for="fecha">Fecha:</label><br />
+    <input type="date" id="fecha" name="fecha" required /><br /><br />
+
+    <input type="submit" value="Crear campaña" />
+  </form>
+</div>
+
+<!-- FORMULARIO PARA EDITAR CAMPAÑA -->
+<div class="seccion">
+  <h2>Editar Campaña</h2>
+  <form action="logica.php" method="POST">
+    <input type="hidden" name="accion" value="editar" />
+
+    <label for="id_editar">ID de campaña (ver lista abajo):</label><br />
+    <input type="number" id="id_editar" name="id" required /><br /><br />
+
+    <label for="lugar_editar">Nuevo Lugar:</label><br />
+    <input type="text" id="lugar_editar" name="lugar" required /><br /><br />
+
+    <label for="fecha_editar">Nueva Fecha:</label><br />
+    <input type="date" id="fecha_editar" name="fecha" required /><br /><br />
+
+    <input type="submit" value="Actualizar campaña" />
+  </form>
+</div>
+
+<!-- FORMULARIO PARA ELIMINAR CAMPAÑA -->
+<div class="seccion">
+  <h2>Eliminar Campaña</h2>
+  <form action="logica.php" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar esta campaña?');">
+    <input type="hidden" name="accion" value="eliminar" />
+
+    <label for="id_eliminar">ID de campaña (ver lista abajo):</label><br />
+    <input type="number" id="id_eliminar" name="id" required /><br /><br />
+
+    <input type="submit" value="Eliminar campaña" />
+  </form>
+</div>
+
+<!-- BOTÓN PARA MOSTRAR LISTADO -->
+<div class="seccion">
+  <h2>Ver campañas registradas</h2>
+  <form action="logica.php" method="GET">
+    <input type="hidden" name="accion" value="listar" />
+    <input type="submit" value="Mostrar campañas" />
+  </form>
+</div>
+
+</body>
+</html>
