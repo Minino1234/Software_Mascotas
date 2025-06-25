@@ -103,7 +103,7 @@ switch ($accion) {
         break;
 }
 
-echo '<p><a href="interfaz.html">⬅ Volver a la interfaz</a></p>';
+echo '<p><a href="interfaz_campaña.html">⬅ Volver a la interfaz</a></p>';
 
 $conn->close();
 ?>

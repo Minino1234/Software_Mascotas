@@ -12,7 +12,7 @@
 <!-- FORMULARIO PARA CREAR CAMPAÑA -->
 <div class="seccion">
   <h2>Crear Campaña</h2>
-  <form action="logica.php" method="POST">
+  <form action="logica_campaña.php" method="POST">
     <input type="hidden" name="accion" value="crear" />
     <label for="lugar">Lugar:</label><br />
     <input type="text" id="lugar" name="lugar" required /><br /><br />
@@ -27,7 +27,7 @@
 <!-- FORMULARIO PARA EDITAR CAMPAÑA -->
 <div class="seccion">
   <h2>Editar Campaña</h2>
-  <form action="logica.php" method="POST">
+  <form action="logica_campaña.php" method="POST">
     <input type="hidden" name="accion" value="editar" />
 
     <label for="id_editar">ID de campaña (ver lista abajo):</label><br />
@@ -46,7 +46,7 @@
 <!-- FORMULARIO PARA ELIMINAR CAMPAÑA -->
 <div class="seccion">
   <h2>Eliminar Campaña</h2>
-  <form action="logica.php" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar esta campaña?');">
+  <form action="logica_campaña.php" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar esta campaña?');">
     <input type="hidden" name="accion" value="eliminar" />
 
     <label for="id_eliminar">ID de campaña (ver lista abajo):</label><br />
@@ -59,7 +59,7 @@
 <!-- BOTÓN PARA MOSTRAR LISTADO -->
 <div class="seccion">
   <h2>Ver campañas registradas</h2>
-  <form action="logica.php" method="GET">
+  <form action="logica_campaña.php" method="GET">
     <input type="hidden" name="accion" value="listar" />
     <input type="submit" value="Mostrar campañas" />
   </form>
