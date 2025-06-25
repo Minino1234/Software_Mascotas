@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registrar Mascota</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+
+    .background {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    .container {
+      background-color: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      max-width: 600px;
+      width: 100%;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      position: relative;
+      z-index: 1;
+    }
+
+    .container img {
+      display: block;
+      margin: 0 auto 20px;
+      max-width: 100%;
+      height: auto;
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 30px;
+      font-size: 24px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #555;
+      font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="tel"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 2px solid #ddd;
+      border-radius: 5px;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #667eea;
+      outline: none;
+    }
+
+    select {
+      cursor: pointer;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 15px;
+    }
+
+    .form-row > div {
+      flex: 1;
+    }
+
+    .boton {
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: white;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      width: 100%;
+      margin-top: 20px;
+      transition: transform 0.2s;
+    }
+
+    .boton:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .required {
+      color: red;
+    }
+
+    .info-text {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 10px;
+      font-style: italic;
+    }
+
+    .section-title {
+      background: #f8f9fa;
+      padding: 10px;
+      margin: 20px 0 15px 0;
+      border-left: 4px solid #667eea;
+      font-weight: bold;
+      color: #333;
+    }
+
+    @media (max-width: 600px) {
+      .form-row {
+        flex-direction: column;
+        gap: 0;
+      }
+      
+      .container {
+        margin: 10px;
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="background">
+    <div class="overlay"></div>
+    <div class="container">
+      <!-- Logo de la municipalidad -->
+      <div style="text-align: center; margin-bottom: 20px;">
+        <div style="width: 80px; height: 80px; background: #667eea; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">
+          LOGO
+        </div>
+        <p style="margin: 10px 0 0 0; font-size: 14px; color: #666;">Sub-Gerencia de Sanidad y Salubridad Pública</p>
+      </div>
+
+      <h2>Registrar Mascota</h2>
+      <p class="info-text">Registre la información completa de la mascota para su control sanitario</p>
+
+      <form id="formMascota">
+        <div class="section-title">Información Básica</div>
+        
+        <label>Nombre de la Mascota <span class="required">*</span></label>
+        <input type="text" name="nombreMascota" id="nombreMascota" required maxlength="25" placeholder="Ingrese el nombre de la mascota">
+
+        <div class="form-row">
+          <div>
+            <label>Especie <span class="required">*</span></label>
+            <select name="idEspecie" id="especieSelect" required>
+              <option value="">Seleccione una especie</option>
+              <option value="1">Perro</option>
+              <option value="2">Gato</option>
+            </select>
+          </div>
+          <div>
+            <label>Género <span class="required">*</span></label>
+            <select name="idGenero" id="generoSelect" required>
+              <option value="">Seleccione el género</option>
+              <option value="1">Macho</option>
+              <option value="2">Hembra</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div>
+            <label>Edad (años) <span class="required">*</span></label>
+            <input type="number" name="edad_mascotas" id="edadMascota" min="0" max="30" required placeholder="Edad en años">
+          </div>
+          <div>
+            <label>Color <span class="required">*</span></label>
+            <input type="text" name="color" id="colorMascota" required maxlength="50" placeholder="Color predominante">
+          </div>
+        </div>
+
+        <label>Comportamiento <span class="required">*</span></label>
+        <select name="idcomportamientos" id="comportamientoSelect" required>
+          <option value="">Seleccione el comportamiento</option>
+          <option value="1">Agresivo</option>
+          <option value="2">Juguetón</option>
+          <option value="3">Tranquilo</option>
+        </select>
+
+        <div class="section-title">Información del Propietario</div>
+        
+        <label>DNI del Propietario <span class="required">*</span></label>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <input type="text" name="dni_propietario" id="dniPropietario" required maxlength="8" pattern="[0-9]{8}" placeholder="12345678" style="flex: 1;">
+          <button type="button" id="buscarPropietario" style="padding: 10px 15px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">
+            Buscar
+          </button>
+        </div>
+        <p class="info-text">Ingrese el DNI del propietario registrado en el sistema</p>
+
+        <div id="infoPropietario" style="display: none; background: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 15px;">
+          <h4 style="margin: 0 0 10px 0; color: #333;">Información del Propietario:</h4>
+          <p id="nombresPropietario" style="margin: 5px 0; font-weight: bold;"></p>
+          <p id="telefonoPropietario" style="margin: 5px 0; color: #666;"></p>
+          <p id="direccionPropietario" style="margin: 5px 0; color: #666;"></p>
+        </div>
+
+        <div class="section-title">Observaciones Adicionales</div>
+        
+        <label>Observaciones:</label>
+        <textarea name="observaciones" id="observaciones" rows="4" placeholder="Ingrese observaciones adicionales sobre la mascota (opcional)" maxlength="500"></textarea>
+
+        <button type="submit" class="boton">Registrar Mascota</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Simulación de datos de propietarios (en producción vendría de la base de datos)
+    const propietarios = {
+      '12345678': {
+        nombres: 'Juan Carlos Pérez González',
+        telefono: '987654321',
+        direccion: 'Av. Luzuriaga 123, Centro'
+      },
+      '87654321': {
+        nombres: 'María Elena Santos Rodríguez',
+        telefono: '912345678',
+        direccion: 'Jr. San Martín 456, Norte'
+      }
+    };
+
+    // Buscar propietario por DNI
+    document.getElementById('buscarPropietario').addEventListener('click', function() {
+      const dni = document.getElementById('dniPropietario').value.trim();
+      const infoPropietario = document.getElementById('infoPropietario');
+      
+      if (dni.length === 8 && /^\d+$/.test(dni)) {
+        if (propietarios[dni]) {
+          const prop = propietarios[dni];
+          document.getElementById('nombresPropietario').textContent = `Nombre: ${prop.nombres}`;
+          document.getElementById('telefonoPropietario').textContent = `Teléfono: ${prop.telefono}`;
+          document.getElementById('direccionPropietario').textContent = `Dirección: ${prop.direccion}`;
+          infoPropietario.style.display = 'block';
+          this.textContent = 'Encontrado ✓';
+          this.style.background = '#28a745';
+        } else {
+          alert('No se encontró ningún propietario con ese DNI. Verifique que el propietario esté registrado en el sistema.');
+          infoPropietario.style.display = 'none';
+          this.textContent = 'Buscar';
+          this.style.background = '#28a745';
+        }
+      } else {
+        alert('Por favor ingrese un DNI válido de 8 dígitos');
+      }
+    });
+
+    // Validar DNI mientras se escribe
+    document.getElementById('dniPropietario').addEventListener('input', function() {
+      const buscarBtn = document.getElementById('buscarPropietario');
+      const infoPropietario = document.getElementById('infoPropietario');
+      
+      this.value = this.value.replace(/\D/g, ''); // Solo números
+      
+      if (this.value.length < 8) {
+        buscarBtn.textContent = 'Buscar';
+        buscarBtn.style.background = '#28a745';
+        infoPropietario.style.display = 'none';
+      }
+    });
+
+    // Validar edad
+    document.getElementById('edadMascota').addEventListener('input', function() {
+      if (this.value < 0) this.value = 0;
+      if (this.value > 30) this.value = 30;
+    });
+
+    // Envío del formulario
+    document.getElementById('formMascota').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Validar que se haya buscado y encontrado un propietario
+      const infoPropietario = document.getElementById('infoPropietario');
+      if (infoPropietario.style.display === 'none') {
+        alert('Debe buscar y verificar un propietario válido antes de registrar la mascota.');
+        return;
+      }
+      
+      // Recopilar datos del formulario
+      const formData = new FormData(this);
+      const mascotaData = {
+        nombreMascota: formData.get('nombreMascota'),
+        idEspecie: formData.get('idEspecie'),
+        idGenero: formData.get('idGenero'),
+        edad_mascotas: formData.get('edad_mascotas'),
+        color: formData.get('color'),
+        idcomportamientos: formData.get('idcomportamientos'),
+        dni_propietario: formData.get('dni_propietario'),
+        observaciones: formData.get('observaciones')
+      };
+      
+      // Aquí iría la llamada AJAX para guardar en la base de datos
+      console.log('Datos de la mascota a registrar:', mascotaData);
+      
+      // Simulación de éxito
+      alert('¡Mascota registrada exitosamente!\n\n' +
+            `Nombre: ${mascotaData.nombreMascota}\n` +
+            `Especie: ${document.querySelector('#especieSelect option:checked').text}\n` +
+            `Propietario DNI: ${mascotaData.dni_propietario}`);
+      
+      // Limpiar formulario
+      this.reset();
+      document.getElementById('infoPropietario').style.display = 'none';
+      document.getElementById('buscarPropietario').textContent = 'Buscar';
+    });
+
+    // Capitalizar primera letra del nombre
+    document.getElementById('nombreMascota').addEventListener('input', function() {
+      this.value = this.value.charAt(0).toUpperCase() + this.value.slice(1);
+    });
+
+    // Capitalizar primera letra del color
+    document.getElementById('colorMascota').addEventListener('input', function() {
+      this.value = this.value.charAt(0).toUpperCase() + this.value.slice(1);
+    });
+  </script>
+</body>
+</html>

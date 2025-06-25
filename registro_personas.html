@@ -2,76 +2,206 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css" />
   <title>Registrar Persona</title>
   <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+    }
+
+    .background {
+      padding-top: 120px; /* Empuja el contenido debajo del header */
+      position: relative;
+    }
+
     .container {
       background-color: rgba(255, 255, 255, 0.95);
       padding: 30px;
       max-width: 600px;
       margin: auto;
       border-radius: 15px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .boton-atras {
+      display: inline-block;
+      margin: 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+      top: 100px;
+  left: 10px;
+  z-index: 999;
+  position: absolute;
+ 
+    }
+
+    .boton-atras:hover {
+      background-color: #0056b3;
+    }
+
+    .grupo-rol {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .titulo-rol {
+      width: 100px;
+      font-weight: bold;
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 20px;
+    }
+
+    .radio-group label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Navbar */
+    .navbar {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 30px;
+      padding: 12px 30px;
+      margin: 20px auto;
+      max-width: 95%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: sans-serif;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 40px);
+      z-index: 1000;
+    }
+
+    .navbar-title {
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: #000;
+    }
+
+    .navbar-links {
+      display: flex;
+      gap: 25px;
+    }
+
+    .navbar-links a {
+      text-decoration: none;
+      color: #007bff;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .navbar-links a:hover,
+    .navbar-links a.active {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .boton {
+      margin-top: 20px;
+      padding: 12px;
+      background-color: #0056b3;
+      border: none;
+      color: white;
+      font-weight: bold;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      width: 100%;
+    }
+
+    .boton:hover {
+      background-color: #004199;
     }
   </style>
 </head>
 <body>
-    <body>
+  <header class="navbar">
+    <div class="navbar-title">Municipalidad de Huaraz</div>
+    <nav class="navbar-links">
+      <a href="registro_personas.html">Registrar Persona</a>
+      <a href="main_menu.html">Registro de Mascotas</a>
+      <a href="#registro">Registro/creacion de Campañas</a>
+      <a href="#ubicacion">Registro de Medicamentos</a>
+    </nav>
+  </header>
+
   <div class="background">
-    <div class="overlay"></div>
-  <div class="container">
-    <img src="imagenes/logo2muni.png" alt="Logo" style="width:450px; height:auto; margin-bottom: 
-        20px;" />
-    <h2>Registrar Persona</h2>
+    <a href="main_menu.html" class="boton-atras">← Atrás</a>
 
-    <form id="formPersona" enctype="multipart/form-data">
-      <label>Nombres:</label>
-      <input type="text" name="nombres" required>
+    <div class="container">
+      <img src="imagenes/logo2muni.png" alt="Logo" style="width:450px; height:auto; margin-bottom:20px;" />
+      <h2>Registrar Persona</h2>
 
-      <label>Apellidos:</label>
-      <input type="text" name="apellidos" required>
+      <form id="formPersona" enctype="multipart/form-data">
+        <label>Nombres:</label>
+        <input type="text" name="nombres" required>
 
-      <label>Teléfono:</label>
-      <input type="tel" name="telefono" required>
+        <label>Apellidos:</label>
+        <input type="text" name="apellidos" required>
 
-      <label>Género:</label>
-      <select name="genero" required>
-        <option value="">Seleccione</option>
-        <option value="Masculino">Masculino</option>
-        <option value="Femenino">Femenino</option>
-      </select>
+        <label>Teléfono:</label>
+        <input type="tel" name="telefono" required>
 
-      <div class="opciones">
-        <label>Rol:</label>
-        <input type="radio" name="rol" value="propietario" id="propietario"> Propietario
-        <input type="radio" name="rol" value="veterinario" id="veterinario"> Veterinario
-      </div>
-
-      <!-- Sección Propietario -->
-      <div id="datosPropietario" class="hidden">
-        <label>Dirección:</label>
-        <input type="text" name="direccion">
-
-        <label>Barrio:</label>
-        <select name="barrio" id="barrioSelect">
-          <option value="">Cargando barrios...</option>
+        <label>Género:</label>
+        <select name="genero" required>
+          <option value="">Seleccione</option>
+          <option value="Masculino">Masculino</option>
+          <option value="Femenino">Femenino</option>
         </select>
-      </div>
 
-      <!-- Sección Veterinario -->
-      <div id="datosVeterinario" class="hidden">
-        <label>Fecha de contratación:</label>
-        <input type="date" name="fecha_contratacion">
+        <div class="grupo-rol">
+          <label class="titulo-rol">Rol:</label>
+          <div class="radio-group">
+            <label><input type="radio" name="rol" value="propietario" id="propietario"> Propietario</label>
+            <label><input type="radio" name="rol" value="veterinario" id="veterinario"> Veterinario</label>
+          </div>
+        </div>
 
-        <label>Fecha de término:</label>
-        <input type="date" name="fecha_termino">
+        <div id="datosPropietario" class="hidden">
+          <label>Dirección:</label>
+          <input type="text" name="direccion">
+          <label>Barrio:</label>
+          <select name="barrio" id="barrioSelect">
+            <option value="">Cargando barrios...</option>
+          </select>
+        </div>
 
-        <label>Contrato (PDF):</label>
-        <input type="file" name="contrato" accept="application/pdf">
-      </div>
+        <div id="datosVeterinario" class="hidden">
+          <label>Fecha de contratación:</label>
+          <input type="date" name="fecha_contratacion">
+          <label>Fecha de término:</label>
+          <input type="date" name="fecha_termino">
+          <label>Contrato (PDF):</label>
+          <input type="file" name="contrato" accept="application/pdf">
+        </div>
 
-      <button type="submit" class="boton">Guardar</button>
-    </form>
+        <button type="submit" class="boton">Guardar</button>
+      </form>
+    </div>
   </div>
 
   <script>
@@ -107,4 +237,3 @@
   </script>
 </body>
 </html>
-
