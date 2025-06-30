@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <link rel="stylesheet" href="styles.css" />
-  <title>Registrar Persona</title>
+  <title>Registrar Propietario o Veterinario</title>
   <style>
     body {
       margin: 0;
@@ -26,7 +26,7 @@
 
     .boton-atras {
       display: inline-block;
-      margin: 20px;
+      margin: 80px;
       background-color: #007bff;
       color: white;
       border: none;
@@ -35,7 +35,7 @@
       text-decoration: none;
       font-weight: bold;
       transition: background-color 0.3s ease;
-      top: 100px;
+      top: 10px;
   left: 10px;
   z-index: 999;
   position: absolute;
@@ -70,26 +70,26 @@
 
     /* Navbar */
     .navbar {
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border-radius: 30px;
-      padding: 12px 30px;
-      margin: 20px auto;
-      max-width: 95%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-family: sans-serif;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: calc(100% - 40px);
-      z-index: 1000;
-    }
-
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.6);
+  z-index: 1000;
+  border-radius: 30px;
+  padding: 12px 30px;
+  width: 95%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: sans-serif;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+.navbar {
+  transition: transform 0.3s ease;
+}
     .navbar-title {
       font-weight: bold;
       font-size: 1.2rem;
@@ -136,14 +136,44 @@
     .boton:hover {
       background-color: #004199;
     }
+
+    #resultados table {
+  font-size: 0.85rem;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#resultados td, #resultados th {
+  padding: 6px;
+  border: 1px solid #ccc;
+  text-align: left;
+  cursor: default;
+}
+
+#resultados button {
+  font-size: 0.8rem;
+  padding: 4px 8px;
+  margin: 0 2px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.editar-btn {
+  background-color: #28a745;
+  color: white;
+}
+.eliminar-btn {
+  background-color: #dc3545;
+  color: white;
+}
   </style>
 </head>
 <body>
   <header class="navbar">
     <div class="navbar-title">Municipalidad de Huaraz</div>
     <nav class="navbar-links">
-      <a href="registro_personas.html">Registrar Persona</a>
-      <a href="main_menu.html">Registro de Mascotas</a>
+      <a href="registro_personas.html">Registrar Propietario o Veterinario</a>
+      <a href="registro_mascotas.html">Registro de Mascotas</a>
       <a href="#registro">Registro/creacion de Campañas</a>
       <a href="#ubicacion">Registro de Medicamentos</a>
     </nav>
@@ -153,13 +183,13 @@
     <a href="main_menu.html" class="boton-atras">← Atrás</a>
 
     <div class="container">
-      <img src="imagenes/logo2muni.png" alt="Logo" style="width:450px; height:auto; margin-bottom:20px;" />
-      <h2>Registrar Persona</h2>
+      <img src="imagenes/logo2muni.png" alt="Logo" style="width:450px; height:auto; margin: 0 auto 20px; display: block;" />
+      <h2>Registrar Propietario o Veterinario</h2>
 
       <form id="formPersona" enctype="multipart/form-data">
   <!-- Datos generales -->
   <label>DNI:</label>
-  <input type="text" name="dni" id="dniInput" required>
+  <input type="text" name="dni" id="dniInput" pattern="\d{8}" maxlength="8" required>
 
   <label>Nombres:</label>
   <input type="text" name="nombres" id="nombresInput" required>
@@ -171,7 +201,8 @@
   <input type="text" name="apellido2" id="apellido2Input" required>
 
   <label>Teléfono:</label>
-  <input type="tel" name="telefono" id="telefonoInput" required>
+  <input type="tel" name="telefono" id="telefonoInput" pattern="\d{9}" maxlength="9" required>
+
 
   <label>Género:</label>
   <select name="genero" id="generoPSelect" required>
@@ -210,8 +241,27 @@
     <input type="file" name="contrato" id="contratoPDF" accept="application/pdf">
   </div>
 
-  <button type="submit" class="boton">Guardar</button>
+  
+<button type="submit" id="btnGuardar" class="boton">Guardar</button>
+<button type="button" id="verRegistros" class="boton" >Ver registros recientes</button>
+  
     </form>
+    <div id="resultados" style="margin-top: 20px;"></div>
+    <ul id="menuContextual" class="hidden" style="
+  position: absolute;
+  background: white;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  list-style: none;
+  padding: 4px 0;
+  margin: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 10000;
+">
+  <li id="editarOpcion" style="padding: 6px 20px; cursor:pointer;">✏️ Editar</li>
+  <li id="eliminarOpcion" style="padding: 6px 20px; cursor:pointer;">🗑️ Eliminar</li>
+</ul>
     </div>
   </div>
 
@@ -219,6 +269,28 @@
     const rolRadios = document.querySelectorAll('input[name="rol"]');
     const datosProp = document.getElementById('datosPropietario');
     const datosVet = document.getElementById('datosVeterinario');
+
+    const botonGuardar = document.querySelector('.boton');
+
+botonGuardar.addEventListener('click', (e) => {
+  const rol = document.querySelector('input[name="rol"]:checked')?.value;
+  const campos = [
+    dni, nombres, apellido1, apellido2, telefono, generoID
+  ];
+
+  const datosRol = rol === 'propietario'
+    ? [document.getElementById('direccionPropietario').value.trim(), document.getElementById('barrioSelect').value]
+    : rol === 'veterinario'
+    ? [document.getElementById('fechaContratacion').value, document.getElementById('fechaTermino').value, document.getElementById('contratoPDF').files[0]]
+    : [];
+
+  const vacios = [...campos, ...datosRol].some(val => !val);
+
+  if (!rol || vacios) {
+    alert('Por favor, complete todos los campos obligatorios antes de guardar.');
+    e.preventDefault();
+  }
+});
 
     rolRadios.forEach(radio => {
       radio.addEventListener('change', () => {
@@ -298,6 +370,15 @@ if (rol === 'propietario') {
   formData.append('fecha_termino', document.getElementById('fechaTermino').value);
   formData.append('contrato', document.getElementById('contratoPDF').files[0]);
 }
+
+// Verificar si es edición
+const idPersonaEditando = document.getElementById('formPersona').dataset.editando || null;
+if (idPersonaEditando) {
+  formData.append('editar', '1');
+  formData.append('idPersona', idPersonaEditando);
+}
+
+
   try {
 
     for (let pair of formData.entries()) {
@@ -311,8 +392,11 @@ if (rol === 'propietario') {
     if (data.success) {
       alert('¡Registro exitoso!');
       document.getElementById('formPersona').reset();
+      document.getElementById('btnGuardar').textContent = 'Guardar';
+      document.getElementById('formPersona').removeAttribute('data-editando');
       document.getElementById('datosPropietario').classList.add('hidden');
       document.getElementById('datosVeterinario').classList.add('hidden');
+      document.getElementById('verRegistros').click(); // 🔄 Recargar registros
     } else {
       alert('Error: ' + data.message);
     }
@@ -321,6 +405,152 @@ if (rol === 'propietario') {
     alert('Ocurrió un error al guardar.');
   }
 });
+
+document.getElementById('verRegistros').addEventListener('click', async () => {
+  const res = await fetch('obtener_registros.php');
+  const data = await res.json();
+
+  const contenedor = document.getElementById('resultados');
+  contenedor.innerHTML = '';
+
+  if (!data.length) {
+    contenedor.textContent = 'No hay registros recientes.';
+    return;
+  }
+
+  const tabla = document.createElement('table');
+  tabla.innerHTML = `
+    <tr>
+    <th style="width: 50%;">Nombre Completo</th>
+    <th style="width: 10%;">DNI</th>
+    <th style="width: 10%;">Rol</th>
+    <th style="width: 17%;">Acciones</th>
+  </tr>
+  `;
+  data.forEach(persona => {
+    const fila = document.createElement('tr');
+    fila.innerHTML = `
+  <td>${persona.nombres} ${persona.apell1} ${persona.apell2}</td>
+  <td>${persona.dni}</td>
+  <td>${persona.rol}</td>
+  <td>
+    <button class="editar-btn"> Editar✏️</button>
+    <button class="eliminar-btn"> Eliminar🗑️</button>
+  </td>
+`;
+    fila.addEventListener('contextmenu', (e) => mostrarMenuContextual(e, persona));
+
+    ;
+    fila.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      
+
+    });
+    
+    tabla.appendChild(fila);
+    fila.querySelector('.editar-btn').addEventListener('click', () => {
+  cargarDatosEnFormulario(persona);
+});
+
+fila.querySelector('.eliminar-btn').addEventListener('click', () => {
+  mostrarConfirmacionEliminar(persona);
+});
+  });
+
+  contenedor.appendChild(tabla);
+});
+
+function eliminarPersona(idPersona, rol) {
+  fetch('eliminar_persona.php', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ idPersona, rol })
+  })
+  .then(res => res.json())
+  .then(data => {
+    alert(data.message);
+    document.getElementById('verRegistros').click(); // recargar
+  });
+}
+
+function cargarDatosEnFormulario(persona) {
+  // Rellenar campos básicos
+  document.getElementById('dniInput').value = persona.dni;
+  document.getElementById('nombresInput').value = persona.nombres;
+  document.getElementById('apellido1Input').value = persona.apell1;
+  document.getElementById('apellido2Input').value = persona.apell2;
+  document.getElementById('telefonoInput').value = persona.telefono;
+  document.getElementById('generoPSelect').value = persona.genero;
+
+  // Seleccionar rol
+  const radio = document.querySelector(`input[name="rol"][value="${persona.rol}"]`);
+  radio.checked = true;
+  radio.dispatchEvent(new Event('change'));
+
+  // Marcar que estamos en modo edición
+  document.getElementById('formPersona').dataset.editando = persona.idPersona;
+  document.getElementById('btnGuardar').textContent = 'Guardar actualización';
+
+  // Obtener datos adicionales desde PHP
+  fetch(`obtener_datos_por_id.php?id=${persona.idPersona}&rol=${persona.rol}`)
+    .then(res => res.json())
+    .then(data => {
+      if (persona.rol === 'propietario') {
+        document.getElementById('direccionPropietario').value = data.direccion || '';
+        document.getElementById('barrioSelect').value = data.barrio || '';
+      } else if (persona.rol === 'veterinario') {
+        document.getElementById('fechaContratacion').value = data.fecha_contratacion || '';
+        document.getElementById('fechaTermino').value = data.plazo_contrato || '';
+      }
+    });
+}
+// Variables globales
+let personaSeleccionada = null;
+const menu = document.getElementById('menuContextual');
+
+
+
+function mostrarConfirmacionEliminar(persona) {
+  const fondo = document.createElement('div');
+  fondo.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.4);display:flex;justify-content:center;align-items:center;z-index:9999;';
+
+  const modal = document.createElement('div');
+  modal.style.cssText = 'background:white;padding:20px 30px;border-radius:10px;text-align:center;box-shadow:0 5px 20px rgba(0,0,0,0.3);';
+  modal.innerHTML = `
+    <p style="margin-bottom:20px;font-size:1rem;">¿Estás seguro de que deseas eliminar a <strong>${persona.nombres}</strong>?</p>
+    <button id="confirmarEliminacion" style="margin-right:10px;">Sí</button>
+    <button id="cancelarEliminacion">No</button>
+  `;
+
+  fondo.appendChild(modal);
+  document.body.appendChild(fondo);
+
+  document.getElementById('cancelarEliminacion').onclick = () => document.body.removeChild(fondo);
+  document.getElementById('confirmarEliminacion').onclick = () => {
+    eliminarPersona(persona.idPersona, persona.rol);
+    document.body.removeChild(fondo);
+  };
+}
+
+
   </script>
+  <script>
+  let ultimoScroll = 0;
+  const navbar = document.querySelector('.navbar');
+
+  window.addEventListener('scroll', () => {
+    const scrollActual = window.pageYOffset || document.documentElement.scrollTop;
+
+    if (scrollActual > ultimoScroll) {
+      // Scroll hacia abajo → ocultar
+      navbar.style.transform = 'translate(-50%, -120%)';
+    } else {
+      // Scroll hacia arriba → mostrar
+      navbar.style.transform = 'translate(-50%, 0)';
+    }
+
+    ultimoScroll = scrollActual <= 0 ? 0 : scrollActual; // evitar valores negativos
+  });
+</script>
 </body>
 </html>
