@@ -45,82 +45,231 @@
     tr:hover {
       background-color: #f0f8ff;
     }
+
+    /* Contenedor central para centrar todo */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f9fa;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 900px;
+      width: 100%;
+      background: white;
+      padding: 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.12);
+      box-sizing: border-box;
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #0d6efd;
+      margin-bottom: 25px;
+      font-weight: 700;
+    }
+
+    .seccion {
+      background: #fff;
+      padding: 25px 30px;
+      margin-bottom: 35px;
+      border-radius: 8px;
+      box-shadow: 0 2px 12px rgb(13 110 253 / 0.12);
+      box-sizing: border-box;
+    }
+
+    form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      justify-content: center;
+    }
+
+    form label {
+      flex: 1 1 100%;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #212529;
+    }
+
+    form input[type="text"],
+    form input[type="date"],
+    form select {
+      flex: 1 1 45%;
+      padding: 12px 15px;
+      border: 1.8px solid #ced4da;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.25s ease;
+      box-sizing: border-box;
+    }
+
+    form input[type="text"]:focus,
+    form input[type="date"]:focus,
+    form select:focus {
+      border-color: #0d6efd;
+      outline: none;
+      box-shadow: 0 0 8px rgb(13 110 253 / 0.3);
+    }
+
+    form input[type="submit"],
+    form button {
+      flex: 1 1 100%;
+      max-width: 280px;
+      margin: 20px auto 0;
+      background-color: #0d6efd;
+      color: white;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      padding: 14px 0;
+      cursor: pointer;
+      transition: background-color 0.25s ease;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    form input[type="submit"]:hover,
+    form button:hover {
+      background-color: #084298;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      font-size: 15px;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgb(0 0 0 / 0.1);
+    }
+
+    thead {
+      background-color: #0d6efd;
+      color: white;
+      font-weight: 700;
+    }
+
+    th, td {
+      padding: 16px 20px;
+      border-bottom: 1px solid #dee2e6;
+      text-align: left;
+    }
+
+    tbody tr:hover {
+      background-color: #e7f1ff;
+    }
+
+    .estado-pendiente {
+      background-color: #fff3cd;
+      color: #664d03;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .estado-activa {
+      background-color: #d1e7dd;
+      color: #0f5132;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .estado-ejecutada {
+      background-color: #f8d7da;
+      color: #842029;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    #editar_seccion,
+    #eliminar_seccion {
+      display: none;
+    }
   </style>
 </head>
 <body>
 
-<h1>Gestión de Campañas</h1>
+<div class="container">
 
-<!-- FORMULARIO PARA CREAR CAMPAÑA -->
-<div class="seccion">
-  <h2>Crear Campaña</h2>
-  <form action="logica_campaña.php" method="POST">
-    <input type="hidden" name="accion" value="crear" />
-    <label for="lugar">Lugar:</label><br />
-    <input type="text" id="lugar" name="lugar" required /><br /><br />
+  <h1>Gestión de Campañas</h1>
 
-    <label for="fecha">Fecha:</label><br />
-    <input type="date" id="fecha" name="fecha" required /><br /><br />
+  <!-- FORMULARIO PARA CREAR CAMPAÑA -->
+  <div class="seccion">
+    <h2>Crear Campaña</h2>
+    <form action="logica_campaña.php" method="POST">
+      <input type="hidden" name="accion" value="crear" />
+      <label for="lugar">Lugar:</label><br />
+      <input type="text" id="lugar" name="lugar" required /><br /><br />
 
-    <input type="submit" value="Crear campaña" />
-  </form>
-</div>
+      <label for="fecha">Fecha:</label><br />
+      <input type="date" id="fecha" name="fecha" required /><br /><br />
 
-<!-- FORMULARIO PARA BUSCAR Y SELECCIONAR CAMPAÑA -->
-<div class="seccion">
-  <h2>Modificar Campaña</h2>
-  <form id="buscar_form">
-    <label for="buscar_nombre">Buscar campaña por nombre:</label><br />
-    <input type="text" id="buscar_nombre" name="buscar_nombre" placeholder="Escribe el nombre del lugar..." /><br /><br />
-    
-    <label for="combo_campana">O seleccionar campaña:</label><br />
-    <select id="combo_campana" name="id">
-      <option value="">-- Selecciona una campaña --</option>
-    </select><br /><br />
+      <input type="submit" value="Crear campaña" />
+    </form>
+  </div>
 
-    <button type="button" onclick="mostrarSecciones()">Seleccionar</button>
-  </form>
-</div>
+  <!-- FORMULARIO PARA BUSCAR Y SELECCIONAR CAMPAÑA -->
+  <div class="seccion">
+    <h2>Modificar Campaña</h2>
+    <form id="buscar_form">
+      <label for="buscar_nombre">Buscar campaña por nombre:</label><br />
+      <input type="text" id="buscar_nombre" name="buscar_nombre" placeholder="Escribe el nombre del lugar..." /><br /><br />
+      
+      <label for="combo_campana">O seleccionar campaña:</label><br />
+      <select id="combo_campana" name="id">
+        <option value="">-- Selecciona una campaña --</option>
+      </select><br /><br />
 
-<!-- FORMULARIO PARA EDITAR CAMPAÑA -->
-<div class="seccion" id="editar_seccion" style="display:none;">
-  <h2>Editar Campaña</h2>
-  <form action="logica_campaña.php" method="POST">
-    <input type="hidden" name="accion" value="editar" />
-    <input type="hidden" id="editar_id" name="id" />
+      <button type="button" onclick="mostrarSecciones()">Seleccionar</button>
+    </form>
+  </div>
 
-    <label for="lugar_editar">Nuevo Lugar:</label><br />
-    <input type="text" id="lugar_editar" name="lugar" required /><br /><br />
+  <!-- FORMULARIO PARA EDITAR CAMPAÑA -->
+  <div class="seccion" id="editar_seccion">
+    <h2>Editar Campaña</h2>
+    <form action="logica_campaña.php" method="POST">
+      <input type="hidden" name="accion" value="editar" />
+      <input type="hidden" id="editar_id" name="id" />
 
-    <label for="fecha_editar">Nueva Fecha:</label><br />
-    <input type="date" id="fecha_editar" name="fecha" required /><br /><br />
+      <label for="lugar_editar">Nuevo Lugar:</label><br />
+      <input type="text" id="lugar_editar" name="lugar" required /><br /><br />
 
-    <input type="submit" value="Actualizar campaña" />
-  </form>
-</div>
+      <label for="fecha_editar">Nueva Fecha:</label><br />
+      <input type="date" id="fecha_editar" name="fecha" required /><br /><br />
 
-<!-- FORMULARIO PARA ELIMINAR CAMPAÑA -->
-<div class="seccion" id="eliminar_seccion" style="display:none;">
-  <h2>Eliminar Campaña</h2>
-  <form action="logica_campaña.php" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar esta campaña?');">
-    <input type="hidden" name="accion" value="eliminar" />
-    <input type="hidden" id="eliminar_id" name="id" />
-    <input type="submit" value="Eliminar campaña" />
-  </form>
-</div>
+      <input type="submit" value="Actualizar campaña" />
+    </form>
+  </div>
 
-<!-- BOTÓN PARA MOSTRAR LISTADO -->
-<div class="seccion">
-  <h2>Ver campañas registradas</h2>
-  <form id="form-listar" action="logica_campaña.php" method="GET">
-    <input type="hidden" name="accion" value="listar" />
-    <input type="submit" value="Mostrar campañas" />
-  </form>
-  <div id="resultado-listado"></div>
-</div>
+  <!-- FORMULARIO PARA ELIMINAR CAMPAÑA -->
+  <div class="seccion" id="eliminar_seccion">
+    <h2>Eliminar Campaña</h2>
+    <form action="logica_campaña.php" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar esta campaña?');">
+      <input type="hidden" name="accion" value="eliminar" />
+      <input type="hidden" id="eliminar_id" name="id" />
+      <input type="submit" value="Eliminar campaña" />
+    </form>
+  </div>
 
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+  <!-- BOTÓN PARA MOSTRAR LISTADO -->
+  <div class="seccion">
+    <h2>Ver campañas registradas</h2>
+    <form id="form-listar" action="logica_campaña.php" method="GET">
+      <input type="hidden" name="accion" value="listar" />
+      <input type="submit" value="Mostrar campañas" />
+    </form>
+    <div id="resultado-listado"></div>
+  </div>
+
+</div> <!-- /.container -->
+
 <script>
 function cargarCampanias() {
   $.get("logica_campaña.php", { accion: "listar_combo" }, function (data) {
