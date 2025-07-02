@@ -1,109 +1,84 @@
 <?php
 include "bd.php";
-
 $accion = $_REQUEST['accion'] ?? '';
 
-echo "<style>
-  body { font-family: Arial, sans-serif; margin: 20px; background: #eaf6ff; color: #003366; }
-  h1, h2 { color: #003366; }
-  table { border-collapse: collapse; width: 100%; max-width: 600px; margin-top: 20px; }
-  th, td { border: 1px solid #aaccee; padding: 8px; text-align: left; }
-  th { background-color: #007acc; color: white; }
-  tr:hover { background-color: #d6eaff; }
-  a { color: #007acc; text-decoration: none; }
-  a:hover { text-decoration: underline; }
-  .mensaje { margin-top: 20px; font-weight: bold; }
-</style>";
-
-echo "<h1>Gestión de Campañas - Resultado</h1>";
-
-switch ($accion) {
-    case 'crear':
-        $lugar = $_POST['lugar'] ?? '';
-        $fecha = $_POST['fecha'] ?? '';
-        if ($lugar && $fecha) {
-            $stmt = $conn->prepare("INSERT INTO campañas (`lugar_campaña`, `fecha_campaña`) VALUES (?, ?)");
-            if ($stmt === false) {
-                echo "<p class='mensaje'>❌ Error en prepare: " . htmlspecialchars($conn->error) . "</p>";
-                break;
-            }
-            $stmt->bind_param("ss", $lugar, $fecha);
-            if ($stmt->execute()) {
-                echo "<p class='mensaje'>✅ Campaña creada correctamente.</p>";
-            } else {
-                echo "<p class='mensaje'>❌ Error al crear campaña: " . htmlspecialchars($stmt->error) . "</p>";
-            }
-            $stmt->close();
-        } else {
-            echo "<p class='mensaje'>❌ Datos incompletos.</p>";
-        }
-        break;
-
-    case 'editar':
-        $id = intval($_POST['id'] ?? 0);
-        $lugar = $_POST['lugar'] ?? '';
-        $fecha = $_POST['fecha'] ?? '';
-        if ($id > 0 && $lugar && $fecha) {
-            $stmt = $conn->prepare("UPDATE campañas SET `lugar_campaña` = ?, `fecha_campaña` = ? WHERE idCampañas = ?");
-            if ($stmt === false) {
-                echo "<p class='mensaje'>❌ Error en prepare: " . htmlspecialchars($conn->error) . "</p>";
-                break;
-            }
-            $stmt->bind_param("ssi", $lugar, $fecha, $id);
-            if ($stmt->execute()) {
-                echo "<p class='mensaje'>✏️ Campaña actualizada correctamente.</p>";
-            } else {
-                echo "<p class='mensaje'>❌ Error al actualizar campaña: " . htmlspecialchars($stmt->error) . "</p>";
-            }
-            $stmt->close();
-        } else {
-            echo "<p class='mensaje'>❌ Datos incompletos para editar.</p>";
-        }
-        break;
-
-    case 'eliminar':
-        $id = intval($_POST['id'] ?? 0);
-        if ($id > 0) {
-            $stmt = $conn->prepare("DELETE FROM campañas WHERE idCampañas = ?");
-            if ($stmt === false) {
-                echo "<p class='mensaje'>❌ Error en prepare: " . htmlspecialchars($conn->error) . "</p>";
-                break;
-            }
-            $stmt->bind_param("i", $id);
-            if ($stmt->execute()) {
-                echo "<p class='mensaje'>🗑️ Campaña eliminada correctamente.</p>";
-            } else {
-                echo "<p class='mensaje'>❌ Error al eliminar campaña: " . htmlspecialchars($stmt->error) . "</p>";
-            }
-            $stmt->close();
-        } else {
-            echo "<p class='mensaje'>❌ ID no válido para eliminar.</p>";
-        }
-        break;
-
-    case 'listar':
-        $result = $conn->query("SELECT * FROM campañas ORDER BY idCampañas ASC");
-        if ($result && $result->num_rows > 0) {
-            echo "<h2>📋 Lista de campañas</h2>";
-            echo "<table><tr><th>ID</th><th>Lugar</th><th>Fecha</th></tr>";
-            while ($row = $result->fetch_assoc()) {
-                $id = htmlspecialchars($row['idCampañas']);
-                $lugar = htmlspecialchars($row['lugar_campaña']);
-                $fecha = htmlspecialchars($row['fecha_campaña']);
-                echo "<tr><td>$id</td><td>$lugar</td><td>$fecha</td></tr>";
-            }
-            echo "</table>";
-        } else {
-            echo "<p>No hay campañas registradas.</p>";
-        }
-        break;
-
-    default:
-        echo "<p>⚠️ Acción no reconocida o no especificada.</p>";
-        break;
+function estadoCampania($fecha) {
+  $hoy = date("Y-m-d");
+  if ($fecha == $hoy) return ["Activa", "estado-activa"];
+  elseif ($fecha > $hoy) return ["Pendiente", "estado-pendiente"];
+  else return ["Ejecutada", "estado-ejecutada"];
 }
 
-echo '<p><a href="interfaz_campaña.html">⬅ Volver a la interfaz</a></p>';
+switch ($accion) {
+  case "crear":
+    $lugar = $_POST["lugar"] ?? "";
+    $fecha = $_POST["fecha"] ?? "";
+    if ($lugar && $fecha) {
+      $stmt = $conn->prepare("INSERT INTO campañas (`lugar_campaña`, `fecha_campaña`) VALUES (?, ?)");
+      $stmt->bind_param("ss", $lugar, $fecha);
+      $stmt->execute();
+      echo "<p>✅ Campaña creada correctamente.</p>";
+    }
+    break;
+
+  case "editar":
+    $id = intval($_POST["id"] ?? 0);
+    $lugar = $_POST["lugar"] ?? "";
+    $fecha = $_POST["fecha"] ?? "";
+    if ($id && $lugar && $fecha) {
+      $stmt = $conn->prepare("UPDATE campañas SET `lugar_campaña` = ?, `fecha_campaña` = ? WHERE idCampañas = ?");
+      $stmt->bind_param("ssi", $lugar, $fecha, $id);
+      $stmt->execute();
+      echo "<p>✏️ Campaña actualizada.</p>";
+    }
+    break;
+
+  case "eliminar":
+    $id = intval($_POST["id"] ?? 0);
+    if ($id) {
+      $stmt = $conn->prepare("DELETE FROM campañas WHERE idCampañas = ?");
+      $stmt->bind_param("i", $id);
+      $stmt->execute();
+      echo "<p>🗑️ Campaña eliminada.</p>";
+    }
+    break;
+
+  case "listar":
+    $result = $conn->query("SELECT * FROM campañas ORDER BY idCampañas");
+    echo "<h2>📋 Lista de campañas</h2>";
+    if ($result->num_rows > 0) {
+      echo "<table><tr><th>ID</th><th>Lugar</th><th>Fecha</th><th>Estado</th></tr>";
+      while ($row = $result->fetch_assoc()) {
+        list($estado, $clase) = estadoCampania($row["fecha_campaña"]);
+        echo "<tr class='$clase'><td>{$row['idCampañas']}</td><td>{$row['lugar_campaña']}</td><td>{$row['fecha_campaña']}</td><td>$estado</td></tr>";
+      }
+      echo "</table>";
+    } else {
+      echo "<p>No hay campañas registradas.</p>";
+    }
+    break;
+
+  case "listar_combo":
+    $result = $conn->query("SELECT idCampañas AS id, lugar_campaña AS lugar FROM campañas");
+    $data = [];
+    while ($row = $result->fetch_assoc()) {
+      $data[] = $row;
+    }
+    echo json_encode($data);
+    break;
+
+  case "obtener":
+    $id = intval($_GET["id"] ?? 0);
+    $stmt = $conn->prepare("SELECT idCampañas AS id, lugar_campaña AS lugar, fecha_campaña AS fecha FROM campañas WHERE idCampañas = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $res = $stmt->get_result()->fetch_assoc();
+    echo json_encode($res);
+    break;
+
+  default:
+    echo "<p>⚠️ Acción no válida.</p>";
+}
 
 $conn->close();
 ?>

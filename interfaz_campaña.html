@@ -4,6 +4,48 @@
   <meta charset="UTF-8" />
   <title>Gestión de Campañas</title>
   <link rel="stylesheet" href="estilo_campaña.css" />
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
+  <style>
+    /* Estados con color para la tabla */
+    .estado-pendiente {
+      background-color: #f9f9a7;
+      color: #6f6b00;
+      font-weight: bold;
+    }
+    .estado-activa {
+      background-color: #a7f9b9;
+      color: #0a5f0a;
+      font-weight: bold;
+    }
+    .estado-ejecutada {
+      background-color: #f9a7a7;
+      color: #5f0a0a;
+      font-weight: bold;
+    }
+    /* Tabla de campañas con mejor estilo */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: white;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #d0e4f5;
+    }
+    th {
+      background-color: #0d81cf;
+      color: white;
+      font-weight: normal;
+    }
+    tr:hover {
+      background-color: #f0f8ff;
+    }
+  </style>
 </head>
 <body>
 
@@ -24,14 +66,28 @@
   </form>
 </div>
 
-<!-- FORMULARIO PARA EDITAR CAMPAÑA -->
+<!-- FORMULARIO PARA BUSCAR Y SELECCIONAR CAMPAÑA -->
 <div class="seccion">
+  <h2>Modificar Campaña</h2>
+  <form id="buscar_form">
+    <label for="buscar_nombre">Buscar campaña por nombre:</label><br />
+    <input type="text" id="buscar_nombre" name="buscar_nombre" placeholder="Escribe el nombre del lugar..." /><br /><br />
+    
+    <label for="combo_campana">O seleccionar campaña:</label><br />
+    <select id="combo_campana" name="id">
+      <option value="">-- Selecciona una campaña --</option>
+    </select><br /><br />
+
+    <button type="button" onclick="mostrarSecciones()">Seleccionar</button>
+  </form>
+</div>
+
+<!-- FORMULARIO PARA EDITAR CAMPAÑA -->
+<div class="seccion" id="editar_seccion" style="display:none;">
   <h2>Editar Campaña</h2>
   <form action="logica_campaña.php" method="POST">
     <input type="hidden" name="accion" value="editar" />
-
-    <label for="id_editar">ID de campaña (ver lista abajo):</label><br />
-    <input type="number" id="id_editar" name="id" required /><br /><br />
+    <input type="hidden" id="editar_id" name="id" />
 
     <label for="lugar_editar">Nuevo Lugar:</label><br />
     <input type="text" id="lugar_editar" name="lugar" required /><br /><br />
@@ -44,14 +100,11 @@
 </div>
 
 <!-- FORMULARIO PARA ELIMINAR CAMPAÑA -->
-<div class="seccion">
+<div class="seccion" id="eliminar_seccion" style="display:none;">
   <h2>Eliminar Campaña</h2>
   <form action="logica_campaña.php" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar esta campaña?');">
     <input type="hidden" name="accion" value="eliminar" />
-
-    <label for="id_eliminar">ID de campaña (ver lista abajo):</label><br />
-    <input type="number" id="id_eliminar" name="id" required /><br /><br />
-
+    <input type="hidden" id="eliminar_id" name="id" />
     <input type="submit" value="Eliminar campaña" />
   </form>
 </div>
@@ -59,11 +112,65 @@
 <!-- BOTÓN PARA MOSTRAR LISTADO -->
 <div class="seccion">
   <h2>Ver campañas registradas</h2>
-  <form action="logica_campaña.php" method="GET">
+  <form id="form-listar" action="logica_campaña.php" method="GET">
     <input type="hidden" name="accion" value="listar" />
     <input type="submit" value="Mostrar campañas" />
   </form>
+  <div id="resultado-listado"></div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+<script>
+function cargarCampanias() {
+  $.get("logica_campaña.php", { accion: "listar_combo" }, function (data) {
+    const campañas = JSON.parse(data);
+    $("#combo_campana").empty().append('<option value="">-- Selecciona una campaña --</option>');
+    campañas.forEach(c => {
+      $("#combo_campana").append(`<option value="${c.id}">${c.lugar}</option>`);
+    });
+
+    // Autocompletado para input de búsqueda
+    $("#buscar_nombre").autocomplete({
+      source: campañas.map(c => c.lugar),
+      select: function (event, ui) {
+        const seleccionada = campañas.find(c => c.lugar === ui.item.value);
+        if (seleccionada) {
+          $("#combo_campana").val(seleccionada.id);
+        }
+      }
+    });
+  });
+}
+
+function mostrarSecciones() {
+  const id = $("#combo_campana").val();
+  if (!id) {
+    alert("Selecciona una campaña primero.");
+    return;
+  }
+  // Obtener info de la campaña para llenar los campos
+  $.get("logica_campaña.php", { accion: "obtener", id: id }, function (data) {
+    const camp = JSON.parse(data);
+    $("#editar_id").val(camp.id);
+    $("#eliminar_id").val(camp.id);
+    $("#lugar_editar").val(camp.lugar);
+    $("#fecha_editar").val(camp.fecha);
+    $("#editar_seccion").show();
+    $("#eliminar_seccion").show();
+  });
+}
+
+$(document).ready(cargarCampanias);
+
+// Mostrar campañas sin recargar la página
+$("#form-listar").submit(function (e) {
+  e.preventDefault();
+  $.get("logica_campaña.php", { accion: "listar" }, function (data) {
+    $("#resultado-listado").html(data);
+  });
+});
+</script>
 
 </body>
 </html>
