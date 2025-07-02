@@ -266,6 +266,8 @@
   </div>
 
   <script>
+let registrosVisibles = false;
+
     const rolRadios = document.querySelectorAll('input[name="rol"]');
     const datosProp = document.getElementById('datosPropietario');
     const datosVet = document.getElementById('datosVeterinario');
@@ -407,39 +409,30 @@ if (idPersonaEditando) {
 });
 
 document.getElementById('verRegistros').addEventListener('click', async () => {
+  const contenedor = document.getElementById('resultados');
+
+  // Si ya están visibles, se ocultan
+  if (registrosVisibles) {
+    contenedor.innerHTML = '';
+    registrosVisibles = false;
+    return;
+  }
+
+  // Si no estaban visibles, los cargamos
   const res = await fetch('obtener_registros.php');
   const data = await res.json();
 
-  
-  let registrosOriginales = data;
-
-  document.getElementById('buscadorTabla').addEventListener('input', filtrarYOrdenar);
-document.getElementById('ordenTabla').addEventListener('change', filtrarYOrdenar);
-renderizarTabla(data);
-
-function filtrarYOrdenar() {
-  const filtro = document.getElementById('buscadorTabla').value.toLowerCase();
-  const orden = document.getElementById('ordenTabla').value;
-
-  let filtrados = registrosOriginales.filter(p =>
-    (p.nombres + ' ' + p.apell1 + ' ' + p.apell2).toLowerCase().includes(filtro) ||
-    p.rol.toLowerCase().includes(filtro)
-  );
-
-  if (orden === 'nombre') {
-    filtrados.sort((a, b) => a.nombres.localeCompare(b.nombres));
-  } else if (orden === 'nombre_desc') {
-    filtrados.sort((a, b) => b.nombres.localeCompare(a.nombres));
-  } else if (orden === 'rol') {
-    filtrados.sort((a, b) => a.rol.localeCompare(b.rol));
-  } else if (orden === 'rol_desc') {
-    filtrados.sort((a, b) => b.rol.localeCompare(a.rol));
+  if (!data.length) {
+    contenedor.textContent = 'No hay registros recientes.';
+    registrosVisibles = true;
+    return;
   }
 
-  const contenedor = document.getElementById('resultados');
-  contenedor.innerHTML = '';
-  
-  // volver a insertar el buscador arriba
+  registrosVisibles = true;
+
+  let registrosOriginales = data;
+
+  // Insertar buscador y ordenamiento
   contenedor.innerHTML = `
     <div style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
       <label>
@@ -449,100 +442,88 @@ function filtrarYOrdenar() {
       <label>
         Ordenar por: 
         <select id="ordenTabla" style="padding: 5px; border-radius: 5px; border: 1px solid #ccc; margin-left: 10px;">
-          <option value="nombre">Nombre A-Z</option>
-          <option value="nombre_desc">Nombre Z-A</option>
+          <option value="nombre">Apellidos A-Z</option>
+          <option value="nombre_desc">Apellidos Z-A</option>
           <option value="rol">Rol A-Z</option>
           <option value="rol_desc">Rol Z-A</option>
         </select>
       </label>
     </div>
   `;
-  
-  // volver a enganchar eventos
+
+  renderizarTabla(data);
+
+  // Eventos de búsqueda y orden
   document.getElementById('buscadorTabla').addEventListener('input', filtrarYOrdenar);
   document.getElementById('ordenTabla').addEventListener('change', filtrarYOrdenar);
 
-  renderizarTabla(filtrados);
-}
+  function filtrarYOrdenar() {
+    const filtro = document.getElementById('buscadorTabla').value.toLowerCase();
+    const orden = document.getElementById('ordenTabla').value;
 
-  const contenedor = document.getElementById('resultados');
-  contenedor.innerHTML = '';
+    let filtrados = registrosOriginales.filter(p =>
+      (p.nombres + ' ' + p.apell1 + ' ' + p.apell2).toLowerCase().includes(filtro) ||
+      p.rol.toLowerCase().includes(filtro)
+    );
 
-  if (!data.length) {
-    contenedor.textContent = 'No hay registros recientes.';
-    return;
+    if (orden === 'nombre') {
+  filtrados.sort((a, b) => 
+    (a.apell1 + ' ' + a.apell2).localeCompare(b.apell1 + ' ' + b.apell2)
+  );
+} else if (orden === 'nombre_desc') {
+  filtrados.sort((a, b) => 
+    (b.apell1 + ' ' + b.apell2).localeCompare(a.apell1 + ' ' + a.apell2)
+  );
+} else if (orden === 'rol') {
+      filtrados.sort((a, b) => a.rol.localeCompare(b.rol));
+    } else if (orden === 'rol_desc') {
+      filtrados.sort((a, b) => b.rol.localeCompare(a.rol));
+    }
+
+    renderizarTabla(filtrados);
   }
-contenedor.innerHTML = `
-  <div style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
-    <label>
-      🔎 Buscar: 
-      <input type="text" id="buscadorTabla" placeholder="Escribe un nombre o rol..." style="padding: 5px; border-radius: 5px; border: 1px solid #ccc;" />
-    </label>
-    <label>
-      Ordenar por: 
-      <select id="ordenTabla" style="padding: 5px; border-radius: 5px; border: 1px solid #ccc; margin-left: 10px;">
-        <option value="nombre">Nombre A-Z</option>
-        <option value="nombre_desc">Nombre Z-A</option>
-        <option value="rol">Rol A-Z</option>
-        <option value="rol_desc">Rol Z-A</option>
-      </select>
-    </label>
-  </div>
-`;
-  const tabla = document.createElement('table');
-  tabla.innerHTML = `
-    <tr>
-    <th style="width: 50%;">Nombre Completo</th>
-    <th style="width: 10%;">DNI</th>
-    <th style="width: 10%;">Rol</th>
-    <th style="width: 17%;">Acciones</th>
-  </tr>
-  `;
-  data.forEach(persona => {
-    const fila = document.createElement('tr');
-    fila.innerHTML = `
-  <td>${persona.nombres} ${persona.apell1} ${persona.apell2}</td>
-  <td>${persona.dni}</td>
-  <td>${persona.rol}</td>
-  <td>
-    <button class="editar-btn"> Editar✏️</button>
-    <button class="eliminar-btn"> Eliminar🗑️</button>
-  </td>
-`;
-    fila.addEventListener('contextmenu', (e) => mostrarMenuContextual(e, persona));
 
-    ;
-    fila.addEventListener('contextmenu', (e) => {
-      e.preventDefault();
-      
+  function renderizarTabla(registros) {
+    // Elimina tabla existente si hay
+    const tablaVieja = contenedor.querySelector('table');
+    if (tablaVieja) tablaVieja.remove();
 
+    const tabla = document.createElement('table');
+    tabla.innerHTML = `
+      <tr>
+        <th style="width: 50%;">Nombre Completo</th>
+        <th style="width: 10%;">DNI</th>
+        <th style="width: 10%;">Rol</th>
+        <th style="width: 17%;">Acciones</th>
+      </tr>
+    `;
+
+    registros.forEach(persona => {
+      const fila = document.createElement('tr');
+      fila.innerHTML = `
+        <td>${persona.apell1} ${persona.apell2}, ${persona.nombres}</td>
+        <td>${persona.dni}</td>
+        <td>${persona.rol}</td>
+        <td>
+          <button class="editar-btn">✏️ Editar</button>
+          <button class="eliminar-btn">🗑️ Eliminar</button>
+        </td>
+      `;
+
+      fila.querySelector('.editar-btn').addEventListener('click', () => {
+        cargarDatosEnFormulario(persona);
+      });
+
+      fila.querySelector('.eliminar-btn').addEventListener('click', () => {
+        mostrarConfirmacionEliminar(persona);
+      });
+
+      tabla.appendChild(fila);
     });
-    
-    tabla.appendChild(fila);
-    fila.querySelector('.editar-btn').addEventListener('click', () => {
-  cargarDatosEnFormulario(persona);
-});
 
-fila.querySelector('.eliminar-btn').addEventListener('click', () => {
-  mostrarConfirmacionEliminar(persona);
+    contenedor.appendChild(tabla);
+  }
 });
-  });
-
-  contenedor.appendChild(tabla);
-});
-
-function eliminarPersona(idPersona, rol) {
-  fetch('eliminar_persona.php', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ idPersona, rol })
-  })
-  .then(res => res.json())
-  .then(data => {
-    alert(data.message);
-    document.getElementById('verRegistros').click(); // recargar
-  });
-}
 
 function cargarDatosEnFormulario(persona) {
   // Rellenar campos básicos
@@ -622,6 +603,33 @@ function mostrarConfirmacionEliminar(persona) {
 
     ultimoScroll = scrollActual <= 0 ? 0 : scrollActual; // evitar valores negativos
   });
+
+const camposOrdenados = [
+  'dniInput',
+  'nombresInput',
+  'apellido1Input',
+  'apellido2Input',
+  'telefonoInput',
+  'generoPSelect'
+];
+
+// Activar navegación con flecha ↓
+camposOrdenados.forEach((id, index) => {
+  const campo = document.getElementById(id);
+  if (!campo) return;
+
+  campo.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      const siguienteId = camposOrdenados[index + 1];
+      if (siguienteId) {
+        const siguienteCampo = document.getElementById(siguienteId);
+        siguienteCampo?.focus();
+      }
+    }
+  });
+});
+
 </script>
 </body>
 </html>

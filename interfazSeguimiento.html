@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Buscar Propietario</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background: #f7f7f7;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      width: 100%;
+      max-width: 400px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+
+    input[readonly] {
+      background-color: #e9ecef;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #17a2b8;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #117c91;
+    }
+
+    table {
+      width: 100%;
+      max-width: 600px;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: left;
+    }
+
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Buscar Propietario</h2>
+
+  <label for="dni">DNI:</label>
+  <input type="text" id="dni" placeholder="Ingrese DNI del propietario">
+
+  <label for="nombreApellido">Nombres y Apellidos:</label>
+  <input type="text" id="nombreApellido" placeholder="Ingrese nombres y apellidos">
+
+  <button id="buscarBtn">Buscar</button>
+
+  <div id="resultado" class="hidden">
+    <label for="barrio">Barrio:</label>
+    <input type="text" id="barrio" readonly>
+
+    <h4>Mascotas del Propietario</h4>
+    <table id="tablaMascotas">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Especie</th>
+          <th>Sexo</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    const dniInput = document.getElementById('dni');
+    const nombreInput = document.getElementById('nombreApellido');
+    const botonBuscar = document.getElementById('buscarBtn');
+    const barrioInput = document.getElementById('barrio');
+    const resultadoDiv = document.getElementById('resultado');
+    const tablaBody = document.querySelector('#tablaMascotas tbody');
+
+    let modoBusqueda = '';
+
+    dniInput.addEventListener('input', () => {
+      if (dniInput.value.trim()) {
+        botonBuscar.textContent = 'Buscar por DNI';
+        nombreInput.value = '';
+        modoBusqueda = 'dni';
+      }
+    });
+
+    nombreInput.addEventListener('input', () => {
+      if (nombreInput.value.trim()) {
+        botonBuscar.textContent = 'Buscar por Nombres';
+        dniInput.value = '';
+        modoBusqueda = 'nombre';
+      }
+    });
+
+    botonBuscar.addEventListener('click', async () => {
+      const dni = dniInput.value.trim();
+      const nombreCompleto = nombreInput.value.trim();
+
+      let url = 'buscar_propietario.php?';
+
+      if (modoBusqueda === 'dni' && dni) {
+        url += `dni=${encodeURIComponent(dni)}`;
+      } else if (modoBusqueda === 'nombre' && nombreCompleto) {
+        const partes = nombreCompleto.split(' ');
+        const nombre = partes.slice(0, -1).join(' ');
+        const apellido = partes.slice(-1).join(' ');
+        url += `nombre=${encodeURIComponent(nombre)}&apellidos=${encodeURIComponent(apellido)}`;
+      } else {
+        alert('Debes ingresar DNI o nombre completo');
+        return;
+      }
+
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (!data.propietario) {
+          alert('Propietario no encontrado');
+          return;
+        }
+
+        resultadoDiv.classList.remove('hidden');
+        barrioInput.value = data.propietario.barrio;
+
+        if (modoBusqueda === 'dni') {
+          nombreInput.value = `${data.propietario.nombres} ${data.propietario.apell1} ${data.propietario.apell2}`;
+        } else if (modoBusqueda === 'nombre') {
+          dniInput.value = data.propietario.dni ?? '—';
+        }
+
+        // Poblamos la tabla
+        tablaBody.innerHTML = '';
+        data.mascotas.forEach(mascota => {
+          const fila = document.createElement('tr');
+          fila.innerHTML = `
+            <td>${mascota.nombre}</td>
+            <td>${mascota.especie}</td>
+            <td>${mascota.sexo}</td>
+          `;
+          tablaBody.appendChild(fila);
+        });
+
+      } catch (error) {
+        alert('Error al buscar');
+        console.error(error);
+      }
+    });
+  </script>
+
+</body>
+</html>
