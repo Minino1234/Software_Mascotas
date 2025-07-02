@@ -410,6 +410,61 @@ document.getElementById('verRegistros').addEventListener('click', async () => {
   const res = await fetch('obtener_registros.php');
   const data = await res.json();
 
+  
+  let registrosOriginales = data;
+
+  document.getElementById('buscadorTabla').addEventListener('input', filtrarYOrdenar);
+document.getElementById('ordenTabla').addEventListener('change', filtrarYOrdenar);
+renderizarTabla(data);
+
+function filtrarYOrdenar() {
+  const filtro = document.getElementById('buscadorTabla').value.toLowerCase();
+  const orden = document.getElementById('ordenTabla').value;
+
+  let filtrados = registrosOriginales.filter(p =>
+    (p.nombres + ' ' + p.apell1 + ' ' + p.apell2).toLowerCase().includes(filtro) ||
+    p.rol.toLowerCase().includes(filtro)
+  );
+
+  if (orden === 'nombre') {
+    filtrados.sort((a, b) => a.nombres.localeCompare(b.nombres));
+  } else if (orden === 'nombre_desc') {
+    filtrados.sort((a, b) => b.nombres.localeCompare(a.nombres));
+  } else if (orden === 'rol') {
+    filtrados.sort((a, b) => a.rol.localeCompare(b.rol));
+  } else if (orden === 'rol_desc') {
+    filtrados.sort((a, b) => b.rol.localeCompare(a.rol));
+  }
+
+  const contenedor = document.getElementById('resultados');
+  contenedor.innerHTML = '';
+  
+  // volver a insertar el buscador arriba
+  contenedor.innerHTML = `
+    <div style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+      <label>
+        🔎 Buscar: 
+        <input type="text" id="buscadorTabla" placeholder="Escribe un nombre o rol..." style="padding: 5px; border-radius: 5px; border: 1px solid #ccc;" />
+      </label>
+      <label>
+        Ordenar por: 
+        <select id="ordenTabla" style="padding: 5px; border-radius: 5px; border: 1px solid #ccc; margin-left: 10px;">
+          <option value="nombre">Nombre A-Z</option>
+          <option value="nombre_desc">Nombre Z-A</option>
+          <option value="rol">Rol A-Z</option>
+          <option value="rol_desc">Rol Z-A</option>
+        </select>
+      </label>
+    </div>
+  `;
+  
+  // volver a enganchar eventos
+  document.getElementById('buscadorTabla').addEventListener('input', filtrarYOrdenar);
+  document.getElementById('ordenTabla').addEventListener('change', filtrarYOrdenar);
+
+  renderizarTabla(filtrados);
+}
+
   const contenedor = document.getElementById('resultados');
   contenedor.innerHTML = '';
 
@@ -417,7 +472,23 @@ document.getElementById('verRegistros').addEventListener('click', async () => {
     contenedor.textContent = 'No hay registros recientes.';
     return;
   }
-
+contenedor.innerHTML = `
+  <div style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+    <label>
+      🔎 Buscar: 
+      <input type="text" id="buscadorTabla" placeholder="Escribe un nombre o rol..." style="padding: 5px; border-radius: 5px; border: 1px solid #ccc;" />
+    </label>
+    <label>
+      Ordenar por: 
+      <select id="ordenTabla" style="padding: 5px; border-radius: 5px; border: 1px solid #ccc; margin-left: 10px;">
+        <option value="nombre">Nombre A-Z</option>
+        <option value="nombre_desc">Nombre Z-A</option>
+        <option value="rol">Rol A-Z</option>
+        <option value="rol_desc">Rol Z-A</option>
+      </select>
+    </label>
+  </div>
+`;
   const tabla = document.createElement('table');
   tabla.innerHTML = `
     <tr>
