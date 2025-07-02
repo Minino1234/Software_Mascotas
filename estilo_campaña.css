@@ -13,16 +13,16 @@ h1, h2 {
 
 /* Secciones con sombra y fondo blanco */
 .seccion {
-  background-color: #ffffff;
+  background-color: #03318e95;
   border-radius: 10px;
   padding: 25px;
   margin-top: 30px;
-  box-shadow: 0 4px 8px rgba(0, 102, 204, 0.1);
+  box-shadow: 0 4px 8px rgba(12, 49, 85, 0.1);
   border: 1px solid #cce0f5;
 }
 
 /* Formularios */
-form {
+form {  
   margin-top: 10px;
 }
 
@@ -33,7 +33,7 @@ label {
 
 input[type="text"],
 input[type="date"] {
-  width: 100%;
+  width: 50%;
   padding: 10px;
   margin-top: 6px;
   margin-bottom: 15px;
