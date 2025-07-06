@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Registro de Medicamentos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f8;
+    }
+
+    .navbar {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 30px;
+      padding: 12px 30px;
+      margin: 20px auto;
+      max-width: 95%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: sans-serif;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 40px);
+      z-index: 1000;
+    }
+    .background {
+      padding-top: 120px; /* Empuja el contenido debajo del header */
+      position: relative;
+    }
+
+    .navbar-title {
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: #000;
+    }
+
+    .navbar-links {
+      display: flex;
+      gap: 25px;
+    }
+
+    .navbar-links a {
+      text-decoration: none;
+      color: #007bff;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .navbar-links a:hover,
+    .navbar-links a.active {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .background {
+      padding-top: 120px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 40px;
+    }
+
+    h2 {
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    form {
+      display: grid;
+      gap: 20px;
+    }
+
+    label {
+      font-weight: bold;
+    }
+
+    input[type="text"],
+    textarea,
+    input[type="date"],
+    select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: #f9f9f9;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    .boton {
+      padding: 12px;
+      background-color: #007bff;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .boton:hover {
+      background-color: #0056b3;
+    }
+
+    .boton-atras {
+      position: absolute;
+      top: 100px;
+      left: 15px;
+      background: #007bff;
+      color: white;
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ✅ NAVBAR personalizado que me proporcionaste -->
+  <header class="navbar">
+    <div class="navbar-title">Municipalidad de Huaraz</div>
+    <nav class="navbar-links">
+      <a href="registro_personas.html">Registrar Persona</a>
+      <a href="registro_mascotas.html">Registro de Mascotas</a>
+      <a href="interfaz_campaña.html">Registro/creación de Campañas</a>
+      <a href="registro_medicamentos.html" class="active">Registro de Medicamentos</a>
+    </nav>
+  </header>
+
+  <div class="background">
+    <a href="main_menu.html" class="boton-atras">← Atrás</a>
+
+    <div class="container">
+      <h2>Registro de Medicamentos</h2>
+
+      <form id="formMedicamento">
+        <div>
+          <label for="nom_medicina">Nombre del medicamento</label>
+          <input type="text" id="nom_medicina" name="nom_medicina" required>
+        </div>
+
+        <div>
+          <label for="descripcion">Descripción</label>
+          <textarea id="descripcion" name="descripcion" rows="3" required></textarea>
+        </div>
+
+        <div>
+          <label for="fec_vencimiento">Fecha de vencimiento</label>
+          <input type="date" id="fec_vencimiento" name="fec_vencimiento" required>
+        </div>
+
+        <div>
+          <label for="idlotes">Lote</label>
+          <select id="idlotes" name="idlotes" required>
+            <option value="">Cargando lotes...</option>
+          </select>
+        </div>
+
+        <button type="submit" class="boton">Guardar</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Cargar lotes dinámicamente
+    fetch('obtener_lotes.php')
+      .then(response => response.json())
+      .then(data => {
+        const loteSelect = document.getElementById('idlotes');
+        loteSelect.innerHTML = '<option value="">Seleccione un lote</option>';
+        data.forEach(lote => {
+          const option = document.createElement('option');
+          option.value = lote.idlotes;
+          option.textContent = lote.codigos_lotes;
+          loteSelect.appendChild(option);
+        });
+      });
+
+    // Enviar formulario con SweetAlert2
+    document.getElementById('formMedicamento').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+
+      fetch('guardar_medicamento.php', {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => res.text())
+      .then(response => {
+        Swal.fire({
+          icon: 'success',
+          title: '¡Registrado!',
+          text: response,
+          confirmButtonColor: '#007bff'
+        });
+        this.reset();
+      })
+      .catch(error => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudo registrar el medicamento.',
+          confirmButtonColor: '#dc3545'
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>

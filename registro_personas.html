@@ -18,7 +18,7 @@
     .container {
       background-color: rgba(255, 255, 255, 0.95);
       padding: 30px;
-      max-width: 600px;
+      max-width: 1000px;
       margin: auto;
       border-radius: 15px;
       box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
@@ -174,7 +174,7 @@
     <nav class="navbar-links">
       <a href="registro_personas.html">Registrar Propietario o Veterinario</a>
       <a href="registro_mascotas.html">Registro de Mascotas</a>
-      <a href="#registro">Registro/creacion de Campañas</a>
+      <a href="interfaz_campaña.html">Registro/creacion de Campañas</a>
       <a href="#ubicacion">Registro de Medicamentos</a>
     </nav>
   </header>
@@ -524,7 +524,18 @@ document.getElementById('verRegistros').addEventListener('click', async () => {
     contenedor.appendChild(tabla);
   }
 });
-
+function eliminarPersona(idPersona, rol) {
+  fetch('eliminar_persona.php', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ idPersona, rol })
+  })
+  .then(res => res.json())
+  .then(data => {
+    alert(data.message);
+    document.getElementById('verRegistros').click(); // recargar
+  });
+}
 function cargarDatosEnFormulario(persona) {
   // Rellenar campos básicos
   document.getElementById('dniInput').value = persona.dni;
@@ -579,6 +590,29 @@ function mostrarConfirmacionEliminar(persona) {
 
   document.getElementById('cancelarEliminacion').onclick = () => document.body.removeChild(fondo);
   document.getElementById('confirmarEliminacion').onclick = () => {
+    eliminarPersona = (idPersona, rol) => {
+      fetch('eliminar_persona.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ idPersona: idPersona, rol: rol })
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            alert('Persona eliminada correctamente.');
+            location.reload();
+          } else {
+            alert('Error al eliminar la persona: ' + data.message);
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Error al eliminar la persona.');
+        });
+    };
+
     eliminarPersona(persona.idPersona, persona.rol);
     document.body.removeChild(fondo);
   };
