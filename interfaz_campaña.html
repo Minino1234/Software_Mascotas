@@ -247,7 +247,7 @@
       <a href="registro_personas.html">Registrar Propietario o Veterinario</a>
       <a href="registro_mascotas.html">Registro de Mascotas</a>
       <a href="interfaz_campaña.html">Registro/creacion de Campañas</a>
-      <a href="#ubicacion">Registro de Medicamentos</a>
+      <a href="registro_medicamentos.html">Registro de Medicamentos</a>
     </nav>
   </header>
   <div class="background">
@@ -361,7 +361,7 @@
         $("#tablaProcedimientos tbody").append(`
           <tr data-nombre="${nombre}">
             <td>${nombre}</td>
-            <td><button onclick="eliminarProcedimiento('${nombre}')">🗑️</button></td>
+            <td><button class="eliminar-btn" onclick="eliminarProcedimiento('${nombre}')">🗑️ Eliminar Procedimiento</button></td>
           </tr>
         `);
       }

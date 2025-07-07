@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <link rel="stylesheet" href="styles.css" />
   <title>Registrar Propietario o Veterinario</title>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     body {
       margin: 0;
@@ -289,8 +290,11 @@ botonGuardar.addEventListener('click', (e) => {
   const vacios = [...campos, ...datosRol].some(val => !val);
 
   if (!rol || vacios) {
+
     alert('Por favor, complete todos los campos obligatorios antes de guardar.');
     e.preventDefault();
+
+    
   }
 });
 
@@ -392,7 +396,14 @@ if (idPersonaEditando) {
     });
     const data = await res.json();
     if (data.success) {
-      alert('¡Registro exitoso!');
+Swal.fire({
+  icon: "success",
+  title: "¡Registro exitoso!",
+  confirmButtonColor: "#28a745"
+});
+
+
+
       document.getElementById('formPersona').reset();
       document.getElementById('btnGuardar').textContent = 'Guardar';
       document.getElementById('formPersona').removeAttribute('data-editando');
@@ -574,50 +585,58 @@ const menu = document.getElementById('menuContextual');
 
 
 function mostrarConfirmacionEliminar(persona) {
-  const fondo = document.createElement('div');
-  fondo.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.4);display:flex;justify-content:center;align-items:center;z-index:9999;';
-
-  const modal = document.createElement('div');
-  modal.style.cssText = 'background:white;padding:20px 30px;border-radius:10px;text-align:center;box-shadow:0 5px 20px rgba(0,0,0,0.3);';
-  modal.innerHTML = `
-    <p style="margin-bottom:20px;font-size:1rem;">¿Estás seguro de que deseas eliminar a <strong>${persona.nombres}</strong>?</p>
-    <button id="confirmarEliminacion" style="margin-right:10px;">Sí</button>
-    <button id="cancelarEliminacion">No</button>
-  `;
-
-  fondo.appendChild(modal);
-  document.body.appendChild(fondo);
-
-  document.getElementById('cancelarEliminacion').onclick = () => document.body.removeChild(fondo);
-  document.getElementById('confirmarEliminacion').onclick = () => {
-    eliminarPersona = (idPersona, rol) => {
+  Swal.fire({
+    title: `¿Eliminar a <strong>${persona.nombres}</strong>?`,
+    icon: "warning",
+    html: `<p style="margin-top:10px;">Esta acción no se puede deshacer.</p>`,
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#6c757d",
+    confirmButtonText: "Sí, eliminar",
+    cancelButtonText: "Cancelar",
+    focusCancel: true
+  }).then((result) => {
+    if (result.isConfirmed) {
       fetch('eliminar_persona.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ idPersona: idPersona, rol: rol })
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            alert('Persona eliminada correctamente.');
-            location.reload();
-          } else {
-            alert('Error al eliminar la persona: ' + data.message);
-          }
+        body: JSON.stringify({
+          idPersona: persona.idPersona,
+          rol: persona.rol
         })
-        .catch(error => {
-          console.error('Error:', error);
-          alert('Error al eliminar la persona.');
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          Swal.fire({
+            icon: "success",
+            title: "✅ Eliminado",
+            text: data.message,
+            confirmButtonColor: "#28a745"
+          });
+          document.getElementById('verRegistros').click();//poner aqui accion
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "❌ Error",
+            text: data.message,
+            confirmButtonColor: "#dc3545"
+          });
+        }
+      })
+      .catch(() => {
+        Swal.fire({
+          icon: "error",
+          title: "❌ Error de conexión",
+          text: "No se pudo contactar con el servidor.",
+          confirmButtonColor: "#dc3545"
         });
-    };
-
-    eliminarPersona(persona.idPersona, persona.rol);
-    document.body.removeChild(fondo);
-  };
+      });
+    }
+  });
 }
-
 
   </script>
   <script>

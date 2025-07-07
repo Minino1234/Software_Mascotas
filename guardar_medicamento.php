@@ -1,37 +1,67 @@
 <?php
-// Conexión a la base de datos
-$conexion = new mysqli("localhost", "root", "", "bdmascotas");
-
-// Verificar la conexión
+$conexion = new mysqli("localhost", "root", "", "bdmascotas"); // Cambia contraseña si es necesario
 if ($conexion->connect_error) {
-    die("Error de conexión: " . $conexion->connect_error);
+    die("Conexión fallida: " . $conexion->connect_error);
 }
 
-// Obtener y validar los datos del formulario
-$nombre = $_POST['nom_medicina'] ?? '';
-$descripcion = $_POST['descripcion'] ?? '';
-$fecha_vencimiento = $_POST['fec_vencimiento'] ?? '';
-$idlote = $_POST['idlotes'] ?? '';
+$nom_medicina = $_POST['nom_medicina'];
+$descripcion = $_POST['descripcion'];
+$fec_vencimiento = $_POST['fec_vencimiento'];
+$tipo_lote = $_POST['tipo_lote'];
 
-// Validar campos vacíos
-if (empty($nombre) || empty($descripcion) || empty($fecha_vencimiento) || empty($idlote)) {
-    echo "Por favor complete todos los campos.";
-    exit;
+if ($tipo_lote === "nuevo") {
+    $nuevo_lote = trim($_POST['nuevo_lote']);
+
+    if ($nuevo_lote === "") {
+        echo "El código del nuevo lote no puede estar vacío.";
+        exit;
+    }
+
+    // Verificar si el lote ya existe
+    $check = $conexion->prepare("SELECT idlotes FROM lotes_medicinas WHERE codigos_lotes = ?");
+    $check->bind_param("s", $nuevo_lote);
+    $check->execute();
+    $check->store_result();
+
+    if ($check->num_rows > 0) {
+        $check->bind_result($idloteExistente);
+        $check->fetch();
+        $idlote = $idloteExistente;
+        $check->close();
+    } else {
+        // Crear nuevo lote
+        $stmt = $conexion->prepare("INSERT INTO lotes_medicinas (codigos_lotes) VALUES (?)");
+        $stmt->bind_param("s", $nuevo_lote);
+        $stmt->execute();
+
+        if ($stmt->affected_rows > 0) {
+            $idlote = $stmt->insert_id;
+        } else {
+            echo "Error al crear el nuevo lote.";
+            exit;
+        }
+        $stmt->close();
+    }
+} else {
+    // Lote registrado
+    $idlote = $_POST['idlotes'];
+    if (empty($idlote)) {
+        echo "Debe seleccionar un lote registrado.";
+        exit;
+    }
 }
 
-// Insertar en la base de datos
-$sql = "INSERT INTO medicinas (nom_medicina, descripcion, fec_vencimiento, idlotes)
-        VALUES (?, ?, ?, ?)";
+// Insertar medicamento
+$stmt2 = $conexion->prepare("INSERT INTO medicinas (nom_medicina, descripcion, fec_vencimiento, idlotes) VALUES (?, ?, ?, ?)");
+$stmt2->bind_param("sssi", $nom_medicina, $descripcion, $fec_vencimiento, $idlote);
+$stmt2->execute();
 
-$stmt = $conexion->prepare($sql);
-$stmt->bind_param("sssi", $nombre, $descripcion, $fecha_vencimiento, $idlote);
-
-if ($stmt->execute()) {
+if ($stmt2->affected_rows > 0) {
     echo "Medicamento registrado correctamente.";
 } else {
-    echo "Error al registrar el medicamento: " . $conexion->error;
+    echo "Error al registrar el medicamento.";
 }
 
-$stmt->close();
+$stmt2->close();
 $conexion->close();
 ?>

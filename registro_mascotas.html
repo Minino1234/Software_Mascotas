@@ -2,10 +2,10 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <link rel="stylesheet" href="styles.css" />
+   <link rel="stylesheet" href="styles.css" />
   <title>Registrar Mascota</title>
   <style>
-     body {
+    body {
       margin: 0;
       font-family: sans-serif;
     }
@@ -18,7 +18,7 @@
     .container {
       background-color: rgba(255, 255, 255, 0.95);
       padding: 30px;
-      max-width: 600px;
+      max-width: 1000px;
       margin: auto;
       border-radius: 15px;
       box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
@@ -26,7 +26,7 @@
 
     .boton-atras {
       display: inline-block;
-      margin: 20px;
+      margin: 80px;
       background-color: #007bff;
       color: white;
       border: none;
@@ -35,7 +35,7 @@
       text-decoration: none;
       font-weight: bold;
       transition: background-color 0.3s ease;
-      top: 100px;
+      top: 10px;
   left: 10px;
   z-index: 999;
   position: absolute;
@@ -70,26 +70,26 @@
 
     /* Navbar */
     .navbar {
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border-radius: 30px;
-      padding: 12px 30px;
-      margin: 20px auto;
-      max-width: 95%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-family: sans-serif;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: calc(100% - 40px);
-      z-index: 1000;
-    }
-
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.6);
+  z-index: 1000;
+  border-radius: 30px;
+  padding: 12px 30px;
+  width: 95%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: sans-serif;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+.navbar {
+  transition: transform 0.3s ease;
+}
     .navbar-title {
       font-weight: bold;
       font-size: 1.2rem;
@@ -136,84 +136,295 @@
     .boton:hover {
       background-color: #004199;
     }
+
+    #resultados table {
+  font-size: 0.85rem;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#resultados td, #resultados th {
+  padding: 6px;
+  border: 1px solid #ccc;
+  text-align: left;
+  cursor: default;
+}
+
+#resultados button {
+  font-size: 0.8rem;
+  padding: 4px 8px;
+  margin: 0 2px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+    .eliminar-btn {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .editar-btn {
+      background-color: #ffc107;
+      color: black;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .hidden { display: none; }
   </style>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 </head>
 <body>
-  <!-- Barra superior fija (Navbar) -->
-  <header class="navbar">
+ <header class="navbar">
     <div class="navbar-title">Municipalidad de Huaraz</div>
     <nav class="navbar-links">
-      <a href="registro_personas.html">Registrar Persona</a>
-      <a href="main_menu.html" class="active">Registro de Mascotas</a>
-      <a href="#registro">Registro/creación de Campañas</a>
-      <a href="#ubicacion">Registro de Medicamentos</a>
+      <a href="registro_personas.html">Registrar Propietario o Veterinario</a>
+      <a href="registro_mascotas.html">Registro de Mascotas</a>
+      <a href="interfaz_campaña.html">Registro/creacion de Campañas</a>
+      <a href="registro_medicamentos.html">Registro de Medicamentos</a>
     </nav>
   </header>
 
-  <!-- Fondo principal de la interfaz -->
   <div class="background">
-    <!-- Botón de volver al menú principal -->
     <a href="main_menu.html" class="boton-atras">← Atrás</a>
 
-    <!-- Contenedor del formulario -->
-    <div class="container">
-      <!-- Imagen o logo institucional -->
-      <img src="imagenes/logo2muni.png" alt="Logo" style="width:450px; height:auto; margin-bottom:20px;" />
-      
-      <h2>Registrar Mascota</h2>
+<div class="container">
+  <img src="imagenes/logo2muni.png" alt="Logo" style="width:450px; height:auto; margin: 0 auto 20px; display: block;" />
+  <h2>Registrar Mascota</h2>
+  <form id="formMascota" enctype="multipart/form-data">
+     <input type="hidden" id="idMascota" name="idMascota" />
+    <label>Nombre de la Mascota:</label>
+    <input type="text" name="nombreMascota" id="nombreMascota" required maxlength="25" placeholder="Ingrese el nombre" />
 
-      <!-- Formulario principal -->
-      <form id="formMascota">
-        <label>Nombre de la Mascota:</label>
-        <input type="text" name="nombreMascota" id="nombreMascota" required maxlength="25" placeholder="Ingrese el nombre">
+    <label>Foto de la mascota:</label>
+<input type="file" name="fotoMascota" id="fotoMascota" accept="image/*" />
 
-        <label>Especie:</label>
-        <select name="idEspecie" id="especieSelect" required>
-          <option value="">Seleccione una especie</option>
-          <option value="1">Perro</option>
-          <option value="2">Gato</option>
-        </select>
+<img id="previewImagen" src="" alt="Previsualización" style="width:100px; height:100px; object-fit:cover; margin-top:10px; display:none;" />
 
-        <label>Género:</label>
-        <select name="idGenero" id="generoSelect" required>
-          <option value="">Seleccione el género</option>
-          <option value="1">Macho</option>
-          <option value="2">Hembra</option>
-        </select>
+    <label>Especie:</label>
+<select name="idEspecie" id="especieSelect" required>
+  <option value="">Cargando...</option>
+</select>
 
-        <label>Edad (años):</label>
-        <input type="number" name="edad_mascotas" id="edadMascota" min="0" max="30" required>
+<label>Género:</label>
+<select name="idGenero" id="generoSelect" required>
+  <option value="">Cargando...</option>
+</select>
 
-        <label>Color:</label>
-        <input type="text" name="color" id="colorMascota" required maxlength="50">
+    <label>Edad (años):</label>
+    <input type="number" name="edad_mascotas" id="edadMascota" min="0" max="30" required />
 
-        <label>Comportamiento:</label>
-        <select name="idcomportamientos" id="comportamientoSelect" required>
-          <option value="">Seleccione el comportamiento</option>
-          <option value="1">Agresivo</option>
-          <option value="2">Juguetón</option>
-          <option value="3">Tranquilo</option>
-        </select>
+    <label>Color:</label>
+    <input type="text" name="color" id="colorMascota" maxlength="50" required />
 
-        <label>DNI del Propietario:</label>
-        <div style="display: flex; gap: 10px; align-items: center;">
-          <input type="text" name="dni_propietario" id="dniPropietario" required maxlength="8" pattern="[0-9]{8}" placeholder="12345678" style="flex: 1;">
-          <button type="button" id="buscarPropietario" class="boton" style="padding: 10px 15px;">Buscar</button>
-        </div>
+    <label>Comportamiento:</label>
+    <select name="idcomportamientos" id="comportamientoSelect" required></select>
 
-        <!-- Muestra los datos del propietario si es encontrado -->
-        <div id="infoPropietario" class="hidden" style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin-top: 15px;">
-          <h4 style="margin: 0 0 10px 0;">Información del Propietario:</h4>
-          <p id="nombresPropietario" style="margin: 5px 0;"></p>
-          <p id="telefonoPropietario" style="margin: 5px 0;"></p>
-          <p id="direccionPropietario" style="margin: 5px 0;"></p>
-        </div>
+    <label>DNI del Propietario:</label>
+    <input type="text" name="dni_propietario" id="dniPropietario" maxlength="8" pattern="[0-9]{8}" placeholder="12345678" required />
 
-        <label>Observaciones (opcional):</label>
-        <textarea name="observaciones" id="observaciones" rows="4" placeholder="Ingrese observaciones adicionales sobre la mascota" maxlength="500"></textarea>
+    <p id="mensajePropietario" class="hidden" style="color: red;"></p>
+    <h4>Propietario encontrado:</h4>
+    <table id="tablaPropietario" border="1" style="width:100%; display:none;">
+      <thead><tr><th>Apellidos y Nombres</th><th>DNI</th><th>Barrio</th></tr></thead>
+      <tbody></tbody>
+    </table>
 
-        <button type="submit" class="boton">Registrar Mascota</button>
-      </form>
-    </div>
-  </div></body>
+    <label>Observaciones (opcional):</label>
+    <textarea name="observaciones" id="observaciones" rows="3"></textarea>
+
+    <button type="submit" id="btnGuardar" class="boton">Registrar Mascota</button>
+  </form>
+
+  <button class="boton" onclick="toggleRegistros()">Ver registros recientes</button>
+  <div id="panelRegistros" style="display:none;">
+    <h3>🐾 Últimos 10 registros</h3>
+    <input type="text" id="buscarMascotas" placeholder="Buscar por DNI, nombre o barrio" style="width:60%;" />
+    <select id="ordenarMascotas">
+      <option value="nombreMascota">🐶 Nombre de Mascota</option>
+      <option value="propietario">👤 Apellidos y Nombre</option>
+    </select>
+    <div id="tablaMascotas" style="margin-top:20px;"></div>
+  </div>
+</div>
+
+<script>
+
+
+$("#fotoMascota").on("change", function (e) {
+  const file = e.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function (event) {
+      $("#previewImagen").attr("src", event.target.result).show();
+    };
+    reader.readAsDataURL(file);
+  }
+});
+
+function cargarEspecies() {
+  $.get("logica_mascotas.php", { accion: "listar_especies" }, function (data) {
+    const opciones = JSON.parse(data);
+    $("#especieSelect").html('<option value="">Seleccione especie</option>');
+    opciones.forEach(e => {
+      $("#especieSelect").append(`<option value="${e.id}">${e.nombre}</option>`);
+    });
+  });
+}
+
+function cargarGeneros() {
+  $.get("logica_mascotas.php", { accion: "listar_generos" }, function (data) {
+    const opciones = JSON.parse(data);
+    $("#generoSelect").html('<option value="">Seleccione género</option>');
+    opciones.forEach(g => {
+      $("#generoSelect").append(`<option value="${g.id}">${g.nombre}</option>`);
+    });
+  });
+}
+
+
+
+
+
+
+let modoEdicion = false;
+let idMascotaEdicion = null;
+
+function cargarComportamientos() {
+  $.get("logica_mascotas.php", { accion: "listar_comportamientos" }, data => {
+    const opciones = JSON.parse(data);
+    $("#comportamientoSelect").html('<option value="">Seleccione</option>');
+    opciones.forEach(op => {
+      $("#comportamientoSelect").append(`<option value="${op.id}">${op.nombre}</option>`);
+    });
+  });
+}
+
+$("#dniPropietario").on("input", function () {
+  const dni = this.value.replace(/\D/g, '');
+  $(this).val(dni);
+  if (dni.length === 8) {
+    $.get("logica_mascotas.php", { accion: "buscar_propietario", dni }, res => {
+      const data = JSON.parse(res);
+      if (data.encontrado) {
+        $("#mensajePropietario").hide();
+        $("#tablaPropietario").show();
+        $("#tablaPropietario tbody").html(`
+          <tr><td>${data.apellidos} ${data.nombres}</td><td>${data.dni}</td><td>${data.barrio}</td></tr>
+        `);
+      } else {
+        $("#tablaPropietario tbody").empty();
+        $("#tablaPropietario").hide();
+        $("#mensajePropietario").text("⚠️ No se encuentra al propietario.").show();
+      }
+    });
+  } else {
+    $("#tablaPropietario").hide();
+    $("#mensajePropietario").hide();
+  }
+});
+
+$("#formMascota").on("submit", function (e) {
+  e.preventDefault();
+  const formData = new FormData(this);
+  formData.append("accion", modoEdicion ? "editar" : "crear");
+  $.ajax({
+    url: "logica_mascotas.php",
+    method: "POST",
+    data: formData,
+    processData: false,
+    contentType: false,
+    success: function () {
+      alert("✅ Guardado correctamente");
+      location.reload();
+    }
+  });
+});
+
+function toggleRegistros() {
+  $("#panelRegistros").slideToggle();
+  listarMascotas();
+}
+
+$("#buscarMascotas, #ordenarMascotas").on("input change", listarMascotas);
+
+function listarMascotas() {
+  $.get("logica_mascotas.php", {
+    accion: "listar",
+    busqueda: $("#buscarMascotas").val(),
+    orden: $("#ordenarMascotas").val()
+  }, html => {
+    $("#tablaMascotas").html(html);
+  });
+}
+
+function editarMascota(id) {
+  $.get("logica_mascotas.php", { accion: "obtener", id }, res => {
+    const data = JSON.parse(res);
+console.log("📦 Mascota cargada:", data);
+$("#idMascota").val(data.idMascota);
+console.log("🧪 ID insertado en campo oculto:", $("#idMascota").val());
+    
+   $("#idMascota").val(data.idMascota); // <-- Luego lo usamos
+
+    if (data.foto) {
+      $("#previewImagen").attr("src", data.foto).show();
+    }
+
+    idMascotaEdicion = data.id;
+    modoEdicion = true;
+    $("#nombreMascota").val(data.nombreMascota);
+    $("#especieSelect").val(data.idEspecie);
+    $("#generoSelect").val(data.idGenero);
+    $("#edadMascota").val(data.edad_mascotas);
+    $("#colorMascota").val(data.color);
+    $("#comportamientoSelect").val(data.idcomportamientos);
+    $("#dniPropietario").val(data.dni);
+    $("#observaciones").val(data.observaciones || "");
+    $("#btnGuardar").text("Guardar actualización");
+    $("html, body").animate({ scrollTop: 0 }, "slow");
+  });
+}
+
+function eliminarMascota(id, nombre) {
+  if (confirm(`¿Estás seguro de eliminar a la mascota "${nombre}"?`)) {
+    $.post("logica_mascotas.php", { accion: "eliminar", id }, function () {
+      listarMascotas();
+    });
+  }
+}
+
+$(document).ready(function () {
+  cargarComportamientos();
+cargarEspecies();
+cargarGeneros();
+
+});
+</script>
+
+<script>
+  let ultimoScroll = 0;
+  const navbar = document.querySelector('.navbar');
+
+  window.addEventListener('scroll', () => {
+    const scrollActual = window.pageYOffset || document.documentElement.scrollTop;
+
+    if (scrollActual > ultimoScroll) {
+      // Scroll hacia abajo → ocultar
+      navbar.style.transform = 'translate(-50%, -120%)';
+    } else {
+      // Scroll hacia arriba → mostrar
+      navbar.style.transform = 'translate(-50%, 0)';
+    }
+
+    ultimoScroll = scrollActual <= 0 ? 0 : scrollActual; // evitar valores negativos
+  });
+  </script>
+
+</body>
 </html>
+
