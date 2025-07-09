@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>Registro de Ficha</title>
 
-  <!-- Librerías externas -->
+  <link rel="stylesheet" href="styles.css" />
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <style>
@@ -14,6 +14,32 @@
       background-color: #f9f9f9;
     }
 
+.boton-atras {
+      display: inline-block;
+      margin: 80px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+      top: 10px;
+  left: 10px;
+  z-index: 999;
+  position: absolute;
+ 
+    }
+
+    .boton-atras:hover {
+      background-color: #0056b3;
+    }
+
+.background {
+      padding-top: 60px; /* Empuja el contenido debajo del header */
+      position: relative;
+    }
     .container {
       max-width: 1000px;
       margin: 60px auto;
@@ -142,14 +168,78 @@
   background-color: #f0f0f0;
 }
 
-.hidden {
-  display: none;
+/* Navbar */
+    .navbar {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.6);
+  z-index: 1000;
+  border-radius: 30px;
+  padding: 12px 30px;
+  width: 95%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: sans-serif;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
 }
+.navbar {
+  transition: transform 0.3s ease;
+}
+    .navbar-title {
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: #000;
+    }
+
+    .navbar-links {
+      display: flex;
+      gap: 25px;
+    }
+
+    .navbar-links a {
+      text-decoration: none;
+      color: #007bff;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .navbar-links a:hover,
+    .navbar-links a.active {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .hidden {
+      display: none;
+    }
 
   </style>
 </head>
 <body>
+<header class="navbar">
+    <div class="navbar-title">Municipalidad de Huaraz</div>
+    <nav class="navbar-links">
+      <a href="registro_personas.html">Registrar Propietario o Veterinario</a>
+      <a href="registro_mascotas.html">Registro de Mascotas</a>
+      <a href="interfaz_campaña.html">Registro/creacion de Campañas</a>
+      <a href="registro_medicamentos.html">Registro de Medicamentos</a>
+      <a href="registro_ficha.html">Registro de Ficha</a>
+    </nav>
+  </header>
+
+ <div class="background">
+
+    <a href="main_menu.html" class="boton-atras">← Atrás</a>
+
   <div class="container">
+    <img src="imagenes/logo2muni.png" alt="Logo" style="width:450px; height:auto; margin: 0 auto 20px; display: block;" />
     <h2>Registro de Ficha</h2>
     <form id="formFicha">
 
@@ -259,6 +349,9 @@
     <tbody id="medicinasElegidas"></tbody>
   </table>
 
+  <label class="subtitulo" for="observaciones">Observaciones:</label>
+<textarea id="observaciones" rows="4" style="width: 100%;" placeholder="Anotar observaciones..."></textarea>
+
   <!-- 🎯 Botones finales -->
   <button type="submit" id="btnGuardar" class="boton">Guardar</button>
   <button type="button" id="btnVerRegistros" class="boton">Ver registros recientes</button>
@@ -275,6 +368,7 @@
         <th>Campaña</th>
         <th>Procedimientos</th>
         <th>Medicinas Aplicadas</th>
+        <th>Observaciones</th>
         <th>Acciones</th>
       </tr>
     </thead>
@@ -389,38 +483,56 @@ cargarMascotas(p.dni);
   });
 
   nombreInput.addEventListener("input", async () => {
-    const texto = nombreInput.value.trim();
-    sugerencias.textContent = "";
-    dniAuto.value = "—";
-    document.getElementById("tablaPropietario").classList.add("hidden");
+  const texto = nombreInput.value.trim();
+  const lista = document.getElementById("listaSugerencias");
+  lista.innerHTML = "";
+  lista.classList.add("hidden");
+  sugerencias.textContent = "";
+  dniAuto.value = "—";
+  resultadoDNI.textContent = "";
+  document.getElementById("tablaPropietario").classList.add("hidden");
 
-    if (texto.length >= 3) {
-      const res = await fetch("logica_registro.php?action=autocompletar&nombre=" + encodeURIComponent(texto));
-      const raw = await res.text();
-      console.log("🧾 autocompletar:", raw);
+  if (texto.length >= 3) {
+    const res = await fetch("logica_registro.php?action=autocompletar&nombre=" + encodeURIComponent(texto));
+    const raw = await res.text();
+    console.log("🧾 autocompletar:", raw);
 
-      let data;
-      try {
-        data = JSON.parse(raw);
-      } catch (e) {
-        return Swal.fire("Error", "Respuesta inválida del servidor (autocompletar)", "error");
-      }
-
-      if (data.length === 1) {
-        const p = data[0];
-        propietarioSeleccionado = p;
-        dniAuto.value = p.dni;
-        resultadoDNI.textContent = "Propietario encontrado";
-        const fila = `<tr><td>${p.nombres} ${p.apell1} ${p.apell2}</td><td>${p.dni}</td></tr>`;
-        document.getElementById("filaPropietario").innerHTML = fila;
-        document.getElementById("tablaPropietario").classList.remove("hidden");
-        cargarMascotas(p.id);
-      } else {
-        propietarioSeleccionado = null;
-        tablaMascotas.classList.add("hidden");
-      }
+    let data;
+    try {
+      data = JSON.parse(raw);
+    } catch (e) {
+      return Swal.fire("Error", "Respuesta inválida del servidor (autocompletar)", "error");
     }
-  });
+
+    if (data.length > 0) {
+      data.forEach(p => {
+        const li = document.createElement("li");
+        li.textContent = p.nombre_completo;
+        li.classList.add("sugerencia-item");
+        li.dataset.dni = p.dni;
+        li.dataset.id = p.id;
+
+        li.addEventListener("click", () => {
+          nombreInput.value = p.nombre_completo;
+          dniAuto.value = p.dni;
+          resultadoDNI.textContent = "Propietario encontrado";
+
+          const fila = `<tr><td>${p.nombre_completo}</td><td>${p.dni}</td></tr>`;
+          document.getElementById("filaPropietario").innerHTML = fila;
+          document.getElementById("tablaPropietario").classList.remove("hidden");
+
+          propietarioSeleccionado = p;
+          cargarMascotas(p.dni);
+          lista.classList.add("hidden");
+        });
+
+        lista.appendChild(li);
+      });
+
+      lista.classList.remove("hidden");
+    }c
+  }
+});
 
 async function cargarMascotas(dni) {
   const res = await fetch("logica_registro.php?action=mascotas&dni=" + encodeURIComponent(dni));
@@ -440,7 +552,7 @@ async function cargarMascotas(dni) {
   data.forEach(m => {
     const fila = document.createElement("tr");
    fila.innerHTML = `<td>${m.nombre}</td><td>${m.especie}</td><td>${m.edad}</td>`;
-
+fila.dataset.id = m.id
     fila.addEventListener("click", () => {
       fila.classList.toggle("seleccionada");
       const idx = mascotasSeleccionadas.indexOf(m.id);
@@ -470,6 +582,7 @@ async function cargarMascotas(dni) {
     data.forEach(c => {
       const fila = document.createElement("tr");
       fila.innerHTML = `<td>${c.nombre}</td><td>${c.lugar}</td><td>${c.fecha}</td>`;
+      fila.dataset.id = c.id;
       fila.addEventListener("click", () => {
         Array.from(cuerpoCampanias.children).forEach(f => f.classList.remove("seleccionada"));
         fila.classList.add("seleccionada");
@@ -556,23 +669,30 @@ async function cargarMascotas(dni) {
   // ✅ Guardar ficha
   document.getElementById("formFicha").addEventListener("submit", async e => {
     e.preventDefault();
-    console.log("🟢 ¡Se hizo clic en Guardar!");
 
-    if (
-      !propietarioSeleccionado ||
-      mascotasSeleccionadas.length === 0 ||
-      !campaniaSeleccionada ||
-      procedimientosSeleccionados.length === 0
-    ) {
-      return Swal.fire("Campos incompletos", "Por favor completa todos los pasos.", "warning");
-    }
+const confirmar = await Swal.fire({
+  icon: "warning",
+  title: "Revisar datos antes de guardar",
+  text: "Una vez guardados, los datos no podrán editarse.",
+  showCancelButton: true,
+  confirmButtonText: "Sí, guardar",
+  cancelButtonText: "Revisar datos",
+  confirmButtonColor: "#3085d6",
+  cancelButtonColor: "#aaa"
+});
 
+if (!confirmar.isConfirmed) return;
+console.log("🟢 Confirmado: se hará el guardado");
+const observaciones = document.getElementById("observaciones").value.trim();
+const fichaEditarId = btnGuardar.dataset.editarId || null;
     const body = {
       propietario_id: propietarioSeleccionado.id,
       mascotas: mascotasSeleccionadas,
       campania: campaniaSeleccionada,
       procedimientos: procedimientosSeleccionados,
-      medicinas: medicinasSeleccionadas.map(m => m.id)
+      medicinas: medicinasSeleccionadas.map(m => m.id),
+      observaciones: observaciones,
+       id_editar: fichaEditarId
     };
 
     console.log("🚀 Enviando al servidor:", body);
@@ -648,17 +768,15 @@ async function cargarMascotas(dni) {
           <td>${reg.propietario}</td>
           <td>${reg.campania}</td>
           <td>${reg.procedimientos.join(", ")}</td>
-          <td>${reg.medicinas.join(", ")}</td>
+          <td>${reg.medicinas.map(m => m.nombre + " (" + m.lote + ")").join(", ")}</td>
+          <td>${reg.observaciones || "—"}</td>
           <td>
-            <button class="accion-btn editar">Editar</button>
+          
             <button class="accion-btn eliminar">Eliminar</button>
           </td>
         `;
 
-        fila.querySelector(".editar").addEventListener("click", () => {
-          Swal.fire("Modo edición", "Aquí cargarías los datos de la ficha seleccionada para editar.", "info");
-          btnGuardar.textContent = "Guardar actualización";
-        });
+       
 
         fila.querySelector(".eliminar").addEventListener("click", async () => {
           const confirmar = await Swal.fire({
@@ -702,4 +820,22 @@ async function cargarMascotas(dni) {
     }
   });
 });
+
+ let ultimoScroll = 0;
+  const navbar = document.querySelector('.navbar');
+
+  window.addEventListener('scroll', () => {
+    const scrollActual = window.pageYOffset || document.documentElement.scrollTop;
+
+    if (scrollActual > ultimoScroll) {
+      // Scroll hacia abajo → ocultar
+      navbar.style.transform = 'translate(-50%, -120%)';
+    } else {
+      // Scroll hacia arriba → mostrar
+      navbar.style.transform = 'translate(-50%, 0)';
+    }
+
+    ultimoScroll = scrollActual <= 0 ? 0 : scrollActual; // evitar valores negativos
+  });
+
 </script>

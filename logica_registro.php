@@ -112,56 +112,69 @@ if ($accion === "medicinas") {
 
 if ($accion === "guardar") {
     $input = json_decode(file_get_contents("php://input"), true);
-    
-    $idPropietario = $input["propietario_id"] ?? null;
-    $mascotas = $input["mascotas"] ?? [];
-    $campania = $input["campania"] ?? null;
-    $procedimientos = $input["procedimientos"] ?? [];
-    $medicinas = $input["medicinas"] ?? [];
 
-    if (!$idPropietario || !$mascotas || !$campania || !$procedimientos || !$medicinas) {
-        echo json_encode(["success" => false, "message" => "Datos incompletos."]);
-        exit;
-    }
-    
+    $idCampana = $input["campania"];
+    $observaciones = $input["observaciones"] ?? "";
+    $procedimientos = $input["procedimientos"];
+    $mascotas = $input["mascotas"];
+    $medicinas = $input["medicinas"];
 
-    $conn->begin_transaction();
-    try {
-        foreach ($mascotas as $idMascota) {
-            foreach ($procedimientos as $idProc) {
-                foreach ($medicinas as $idMed) {
-                    $stmt = $conn->prepare("INSERT INTO registro_ficha (idCampanas, mascotas_idMascota, observaciones, procedimientos_idprocedimientos, idmedicinas)
-                                            VALUES (?, ?, '', ?, ?)");
-                    $stmt->bind_param("iiii", $campania, $idMascota, $idProc, $idMed);
-                    $stmt->execute();
-                }
+    // ✅ Insertar nueva ficha (ya sea creación o reemplazo tras edición)
+    $stmt = $conn->prepare("INSERT INTO registro_ficha (idCampanas, mascotas_idMascota, observaciones, procedimientos_idprocedimientos) VALUES (?, ?, ?, ?)");
+
+    foreach ($mascotas as $idMascota) {
+        foreach ($procedimientos as $idProced) {
+            $stmt->bind_param("iisi", $idCampana, $idMascota, $observaciones, $idProced);
+            $stmt->execute();
+            $idFicha = $stmt->insert_id;
+
+            foreach ($medicinas as $idMed) {
+                $conn->query("INSERT INTO ficha_medicinas (idregistro_ficha, idmedicinas) VALUES ($idFicha, $idMed)");
             }
         }
-        $conn->commit();
-        echo json_encode(["success" => true]);
-    } catch (Exception $e) {
-        $conn->rollback();
-        echo json_encode(["success" => false, "message" => "Error al guardar: " . $e->getMessage()]);
     }
+
+    echo json_encode([
+        "success" => true,
+        "message" => $idEditar ? "Ficha actualizada" : "Ficha guardada"
+    ]);
     exit;
 }
 
 if ($accion === "registros") {
     $sql = "SELECT rf.idregistro_ficha AS id,
+                   m.idMascota AS mascota_id,
                    m.nombreMascota AS mascota,
+                   p.idPersona AS propietario_id,
                    CONCAT(p.nombres, ' ', p.apell1) AS propietario,
+                   c.idCampanas AS campania_id,
                    c.nombre_campana AS campania,
+                   pr.idprocedimientos AS procedimiento_id,
                    pr.nombre_procedimiento AS procedimiento,
-                   md.nom_medicina AS medicina
+                   rf.observaciones AS observaciones,
+                   md.idmedicinas AS medicina_id,
+                   md.nom_medicina AS medicina_nombre,
+                   l.codigos_lotes AS lote,
+                   md.fec_vencimiento AS vencimiento
             FROM registro_ficha rf
             INNER JOIN mascotas m ON rf.mascotas_idMascota = m.idMascota
-            INNER JOIN personas p ON m.idPersona = p.idPersona
+            INNER JOIN propietarios_has_mascotas phm ON phm.mascotas_idMascota = m.idMascota
+            INNER JOIN propietarios prp ON prp.idPropietarios = phm.propietarios_idPropietarios
+            INNER JOIN personas p ON prp.personas_id = p.idPersona
             INNER JOIN campanas c ON rf.idCampanas = c.idCampanas
             INNER JOIN procedimientos pr ON rf.procedimientos_idprocedimientos = pr.idprocedimientos
-            INNER JOIN medicinas md ON rf.idmedicinas = md.idmedicinas
+            INNER JOIN ficha_medicinas fm ON fm.idregistro_ficha = rf.idregistro_ficha
+            INNER JOIN medicinas md ON fm.idmedicinas = md.idmedicinas
+            INNER JOIN lotes_medicinas l ON md.idlotes = l.idlotes
             ORDER BY rf.idregistro_ficha DESC";
 
-    $resultado = $conn->query($sql)->fetch_all(MYSQLI_ASSOC);
+    $res = $conn->query($sql);
+
+    if ($res === false) {
+        die("❌ Error en la consulta: " . $conn->error);
+    }
+
+    $resultado = $res->fetch_all(MYSQLI_ASSOC);
     $agrupado = [];
 
     foreach ($resultado as $fila) {
@@ -169,15 +182,29 @@ if ($accion === "registros") {
         if (!isset($agrupado[$id])) {
             $agrupado[$id] = [
                 "id" => $id,
+                "mascota_id" => $fila["mascota_id"],
                 "mascota" => $fila["mascota"],
+                "propietario_id" => $fila["propietario_id"],
                 "propietario" => $fila["propietario"],
+                "campania_id" => $fila["campania_id"],
                 "campania" => $fila["campania"],
                 "procedimientos" => [],
-                "medicinas" => []
+                "procedimientos_id" => [],
+                "medicinas" => [],
+                "medicinas_id" => [],
+                "observaciones" => $fila["observaciones"]
             ];
         }
+
         $agrupado[$id]["procedimientos"][] = $fila["procedimiento"];
-        $agrupado[$id]["medicinas"][] = $fila["medicina"];
+        $agrupado[$id]["procedimientos_id"][] = $fila["procedimiento_id"];
+        $agrupado[$id]["medicinas"][] = [
+            "id" => $fila["medicina_id"],
+            "nombre" => $fila["medicina_nombre"],
+            "lote" => $fila["lote"],
+            "vencimiento" => $fila["vencimiento"]
+        ];
+        $agrupado[$id]["medicinas_id"][] = $fila["medicina_id"];
     }
 
     echo json_encode(array_values($agrupado));
@@ -191,13 +218,20 @@ if ($accion === "eliminar") {
         echo json_encode(["success" => false, "message" => "ID no recibido"]);
         exit;
     }
+
+    // Primero eliminar en ficha_medicinas
+    $conn->query("DELETE FROM ficha_medicinas WHERE idregistro_ficha = $id");
+
+    // Luego eliminar en registro_ficha
     $stmt = $conn->prepare("DELETE FROM registro_ficha WHERE idregistro_ficha = ?");
     $stmt->bind_param("i", $id);
+
     if ($stmt->execute()) {
         echo json_encode(["success" => true, "message" => "Ficha eliminada"]);
     } else {
-        echo json_encode(["success" => false, "message" => "Error al eliminar"]);
+        echo json_encode(["success" => false, "message" => "Error al eliminar: " . $stmt->error]);
     }
+
     exit;
 }
 

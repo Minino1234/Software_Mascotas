@@ -186,6 +186,7 @@
       <a href="registro_mascotas.html">Registro de Mascotas</a>
       <a href="interfaz_campaña.html">Registro/creacion de Campañas</a>
       <a href="registro_medicamentos.html">Registro de Medicamentos</a>
+      <a href="registro_ficha.html">Registro de Ficha</a>
     </nav>
   </header>
 
@@ -233,10 +234,6 @@
       <thead><tr><th>Apellidos y Nombres</th><th>DNI</th><th>Barrio</th></tr></thead>
       <tbody></tbody>
     </table>
-
-    <label>Observaciones (opcional):</label>
-    <textarea name="observaciones" id="observaciones" rows="3"></textarea>
-
     <button type="submit" id="btnGuardar" class="boton">Registrar Mascota</button>
   </form>
 
@@ -285,12 +282,6 @@ function cargarGeneros() {
     });
   });
 }
-
-
-
-
-
-
 let modoEdicion = false;
 let idMascotaEdicion = null;
 
