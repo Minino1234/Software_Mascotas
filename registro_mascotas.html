@@ -2,98 +2,63 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-   <link rel="stylesheet" href="styles.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Registrar Mascota</title>
+
+  <!-- Estilos externos -->
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
   <style>
     body {
       margin: 0;
-      font-family: sans-serif;
+      font-family: 'Nunito', sans-serif;
+      background-color: #eef3f8;
     }
 
-    .background {
-      padding-top: 120px; /* Empuja el contenido debajo del header */
-      position: relative;
-    }
+   .background {
+  background-image: url('imagenes/catedralHuaraz.jpg'); /* Usa aquí tu imagen real */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  padding-top: 160px; /* más espacio para separar del navbar */
+  position: relative;
+}
 
-    .container {
-      background-color: rgba(255, 255, 255, 0.95);
-      padding: 30px;
-      max-width: 1000px;
-      margin: auto;
-      border-radius: 15px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-    }
-
-    .boton-atras {
-      display: inline-block;
-      margin: 80px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: bold;
-      transition: background-color 0.3s ease;
-      top: 10px;
-  left: 10px;
-  z-index: 999;
-  position: absolute;
- 
-    }
-
-    .boton-atras:hover {
-      background-color: #0056b3;
-    }
-
-    .grupo-rol {
-      display: flex;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-
-    .titulo-rol {
-      width: 100px;
-      font-weight: bold;
-    }
-
-    .radio-group {
-      display: flex;
-      gap: 20px;
-    }
-
-    .radio-group label {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    /* Navbar */
     .navbar {
-  position: fixed;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.6);
-  z-index: 1000;
-  border-radius: 30px;
-  padding: 12px 30px;
-  width: 95%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-family: sans-serif;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
-}
-.navbar {
-  transition: transform 0.3s ease;
-}
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.75);
+      z-index: 1000;
+      border-radius: 30px;
+      padding: 14px 30px;
+      width: 95%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+
     .navbar-title {
-      font-weight: bold;
-      font-size: 1.2rem;
+      font-weight: 700;
+      font-size: 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
       color: #000;
+    }
+
+    .navbar-title i {
+      font-size: 1.2rem;
+      color: #007bff;
     }
 
     .navbar-links {
@@ -110,90 +75,140 @@
       transition: all 0.3s ease;
     }
 
-    .navbar-links a:hover,
-    .navbar-links a.active {
+    .navbar-links a:hover {
       background-color: #007bff;
       color: white;
     }
 
-    .hidden {
-      display: none;
+    .boton-atras {
+      position: absolute;
+      top: 160px;
+      left: 30px;
+      background-color: #007bff;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-weight: bold;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+      z-index: 999;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .boton-atras:hover {
+      background-color: #0056b3;
+    }
+
+    .container {
+      background-color: rgba(255, 255, 255, 0.95);
+      padding: 40px;
+      max-width: 1000px;
+      margin: auto;
+      border-radius: 20px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+      animation: fadeInUp 0.6s;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 20px;
+      margin-bottom: 6px;
+      color: #003366;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+
+    input:focus, select:focus {
+      border-color: #007bff;
+      outline: none;
     }
 
     .boton {
-      margin-top: 20px;
+      margin-top: 25px;
       padding: 12px;
-      background-color: #0056b3;
+      background-color: #007bff;
       border: none;
       color: white;
       font-weight: bold;
       border-radius: 10px;
       cursor: pointer;
       transition: background-color 0.3s ease;
-      width: 100%;
     }
 
     .boton:hover {
-      background-color: #004199;
+      background-color: #0056b3;
     }
 
-    #resultados table {
-  font-size: 0.85rem;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-#resultados td, #resultados th {
-  padding: 6px;
-  border: 1px solid #ccc;
-  text-align: left;
-  cursor: default;
-}
-
-#resultados button {
-  font-size: 0.8rem;
-  padding: 4px 8px;
-  margin: 0 2px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-    .eliminar-btn {
-      background-color: #dc3545;
-      color: white;
-      border: none;
-      padding: 5px 10px;
-      border-radius: 6px;
-      cursor: pointer;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
     }
+
+    th, td {
+      padding: 8px;
+      border: 1px solid #ccc;
+    }
+
+    #previewImagen {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      margin-top: 10px;
+      display: none;
+      border-radius: 8px;
+    }
+
     .editar-btn {
       background-color: #ffc107;
       color: black;
-      border: none;
       padding: 5px 10px;
       border-radius: 6px;
+      border: none;
       cursor: pointer;
     }
-    .hidden { display: none; }
+
+    .eliminar-btn {
+      background-color: #dc3545;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none;
+    }
   </style>
-  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 </head>
+
 <body>
- <header class="navbar">
-    <div class="navbar-title">Municipalidad de Huaraz</div>
+  <header class="navbar">
+    <div class="navbar-title">
+      <i class="fas fa-dog"></i> Municipalidad de Huaraz
+    </div>
     <nav class="navbar-links">
       <a href="registro_personas.html">Registrar Propietario o Veterinario</a>
       <a href="registro_mascotas.html">Registro de Mascotas</a>
-      <a href="interfaz_campaña.html">Registro/creacion de Campañas</a>
+      <a href="interfaz_campaña.html">Registro de Campañas</a>
       <a href="registro_medicamentos.html">Registro de Medicamentos</a>
       <a href="registro_ficha.html">Registro de Ficha</a>
     </nav>
   </header>
 
   <div class="background">
-    <a href="main_menu.html" class="boton-atras">← Atrás</a>
+    <a href="main_menu.html" class="boton-atras">← Volver al menú principal</a>
 
-<div class="container">
+    <div class="container animate__animated animate__fadeIn">
   <img src="imagenes/logo2muni.png" alt="Logo" style="width:450px; height:auto; margin: 0 auto 20px; display: block;" />
   <h2>Registrar Mascota</h2>
   <form id="formMascota" enctype="multipart/form-data">
@@ -238,9 +253,13 @@
   </form>
 
   <button class="boton" onclick="toggleRegistros()">Ver registros recientes</button>
+
+
+  
   <div id="panelRegistros" style="display:none;">
     <h3>🐾 Últimos 10 registros</h3>
-    <input type="text" id="buscarMascotas" placeholder="Buscar por DNI, nombre o barrio" style="width:60%;" />
+    <input type="text" id="buscarMascotas" placeholder="Buscar por DNI, nombre del propietario o mascota
+    " style="width:60%;" />
     <select id="ordenarMascotas">
       <option value="nombreMascota">🐶 Nombre de Mascota</option>
       <option value="propietario">👤 Apellidos y Nombre</option>
@@ -250,7 +269,9 @@
 </div>
 
 <script>
-
+  cargarComportamientos();
+  cargarEspecies();
+  cargarGeneros();
 
 $("#fotoMascota").on("change", function (e) {
   const file = e.target.files[0];
@@ -321,8 +342,10 @@ $("#dniPropietario").on("input", function () {
 
 $("#formMascota").on("submit", function (e) {
   e.preventDefault();
+
   const formData = new FormData(this);
   formData.append("accion", modoEdicion ? "editar" : "crear");
+
   $.ajax({
     url: "logica_mascotas.php",
     method: "POST",
@@ -330,8 +353,22 @@ $("#formMascota").on("submit", function (e) {
     processData: false,
     contentType: false,
     success: function () {
-      alert("✅ Guardado correctamente");
-      location.reload();
+      Swal.fire({
+        icon: "success",
+        title: "Mascota guardada",
+        text: "Los datos han sido registrados correctamente.",
+        showConfirmButton: false,
+        timer: 1800
+      }).then(() => {
+        location.reload(); // recarga luego del cierre del Swal
+      });
+    },
+    error: function () {
+      Swal.fire({
+        icon: "error",
+        title: "Error al guardar",
+        text: "No se pudo registrar la mascota. Revisa la consola o la conexión.",
+      });
     }
   });
 });
@@ -356,45 +393,72 @@ function listarMascotas() {
 function editarMascota(id) {
   $.get("logica_mascotas.php", { accion: "obtener", id }, res => {
     const data = JSON.parse(res);
-console.log("📦 Mascota cargada:", data);
-$("#idMascota").val(data.idMascota);
-console.log("🧪 ID insertado en campo oculto:", $("#idMascota").val());
-    
-   $("#idMascota").val(data.idMascota); // <-- Luego lo usamos
+    console.log("📦 Mascota cargada:", data);
+    $("#idMascota").val(data.idMascota);
+    console.log("🧪 ID insertado en campo oculto:", $("#idMascota").val());
 
     if (data.foto) {
       $("#previewImagen").attr("src", data.foto).show();
     }
 
-    idMascotaEdicion = data.id;
+    idMascotaEdicion = data.idMascota;
     modoEdicion = true;
     $("#nombreMascota").val(data.nombreMascota);
     $("#especieSelect").val(data.idEspecie);
     $("#generoSelect").val(data.idGenero);
     $("#edadMascota").val(data.edad_mascotas);
-    $("#colorMascota").val(data.color);
+    console.log("🎨 Color recibido:", data.color);
+    $("#colorMascota").val(data.color || "");
     $("#comportamientoSelect").val(data.idcomportamientos);
     $("#dniPropietario").val(data.dni);
     $("#observaciones").val(data.observaciones || "");
     $("#btnGuardar").text("Guardar actualización");
     $("html, body").animate({ scrollTop: 0 }, "slow");
+
+    // 🟨 Alerta con resumen de la mascota
+    Swal.fire({
+      title: `Editando mascota #${data.idMascota}`,
+      html: `
+        <strong>Nombre:</strong> ${data.nombreMascota}<br>
+        <strong>Edad:</strong> ${data.edad_mascotas}<br>
+        <strong>Color:</strong> ${data.color}<br>
+        <strong>Género:</strong> ${$("#generoSelect option:selected").text()}<br>
+        <strong>Especie:</strong> ${$("#especieSelect option:selected").text()}<br>
+        <strong>Comportamiento:</strong> ${$("#comportamientoSelect option:selected").text()}
+      `,
+      icon: "info",
+      confirmButtonText: "Continuar",
+      customClass: { popup: "swal-edicion-popup" }
+    });
   });
 }
 
 function eliminarMascota(id, nombre) {
-  if (confirm(`¿Estás seguro de eliminar a la mascota "${nombre}"?`)) {
-    $.post("logica_mascotas.php", { accion: "eliminar", id }, function () {
-      listarMascotas();
-    });
-  }
+  Swal.fire({
+    title: `¿Eliminar a "${nombre}"?`,
+    text: "Esta acción no se puede deshacer.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Sí, eliminar",
+    cancelButtonText: "Cancelar",
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#999"
+  }).then(result => {
+    if (result.isConfirmed) {
+      $.post("logica_mascotas.php", { accion: "eliminar", id }, function () {
+        listarMascotas();
+
+        Swal.fire({
+          icon: "success",
+          title: "Mascota eliminada",
+          text: `"${nombre}" ha sido borrada correctamente.`,
+          timer: 1800,
+          showConfirmButton: false
+        });
+      });
+    }
+  });
 }
-
-$(document).ready(function () {
-  cargarComportamientos();
-cargarEspecies();
-cargarGeneros();
-
-});
 </script>
 
 <script>

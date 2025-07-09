@@ -244,11 +244,10 @@
   <header class="navbar">
     <div class="navbar-title">Municipalidad de Huaraz</div>
     <nav class="navbar-links">
-    <a href="registro_personas.html">Registrar Propietario o Veterinario</a>
+      <a href="registro_personas.html">Registrar Propietario o Veterinario</a>
       <a href="registro_mascotas.html">Registro de Mascotas</a>
       <a href="interfaz_campaña.html">Registro/creacion de Campañas</a>
       <a href="registro_medicamentos.html">Registro de Medicamentos</a>
-      <a href="registro_ficha.html">Registro de Ficha</a>
     </nav>
   </header>
   <div class="background">
@@ -273,6 +272,28 @@
       <!-- Combobox de tratamientos -->
 <label for="tratamientoCombo">Seleccionar procedimiento:</label>
 <select id="tratamientoCombo" style="width: 100%; margin-bottom: 10px;"></select>
+
+      <!-- Combobox de veterinario -->
+
+<label for="veterinarioSelect">Seleccionar veterinario:</label>
+<select id="veterinarioSelect" name="veterinarioSelect">
+  <option value="">-- Seleccione veterinario --</option>
+</select>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $.get('logica_campaña.php?accion=obtener_veterinarios', function(data) {
+      data.forEach(function(vet) {
+        $('#veterinarioSelect').append(
+          $('<option>', { value: vet.id, text: vet.nombre_completo })
+        );
+      });
+    }, 'json');
+  });
+</script>
+
+
 
 <!-- Tabla dinámica de tratamientos seleccionados -->
 <h4>Procedimientos seleccionados:</h4>
@@ -312,6 +333,8 @@
 
   <div id="contenidoCampanias" style="margin-top: 20px;">Cargando...</div>
 </div>
+
+
 <!-- Script de lógica -->
 <script>
   const seleccionados = new Set();
@@ -374,6 +397,32 @@
     seleccionados.delete(nombre);
     $(`#tablaProcedimientos tbody tr[data-nombre="${nombre}"]`).remove();
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
 
   function cargarProcedimientos() {
     $.get("logica_campaña.php", { accion: "listar_procedimientos" }, function (data) {

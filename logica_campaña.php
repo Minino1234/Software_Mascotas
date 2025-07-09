@@ -37,6 +37,16 @@ switch ($accion) {
       }
     }
   }
+
+
+// Insertar veterinarios seleccionados en la tabla campanna_veterinario
+if (!empty($_POST['veterinarios'])) {
+    foreach ($_POST['veterinarios'] as $vetId) {
+        $vetId = intval($vetId); // seguridad
+        $conn->query("INSERT INTO campanna_veterinario (veterinarios_id, idCampanas) VALUES ($vetId, $campanaId)");
+    }
+}
+
   break;
 
   case "editar":
@@ -71,6 +81,32 @@ switch ($accion) {
       $stmt->execute();
     }
     break;
+
+
+
+
+case "obtener_veterinarios":
+    $sql = "SELECT v.idveterinarios, p.nombres, p.apell1, p.apell2
+            FROM veterinarios v
+            INNER JOIN personas p ON v.personas_id = p.idPersona
+            ORDER BY p.nombres, p.apell1";
+    $result = $conn->query($sql);
+    $veterinariosStr = [];
+    while ($row = $result->fetch_assoc()) {
+        $veterinariosStr[] = [
+            'id' => $row['idveterinarios'],
+            'nombre_completo' => $row['nombres'] . ' ' . $row['apell1'] . ' ' . $row['apell2']
+        ];
+    }
+    echo json_encode($veterinariosStr);
+    break;
+
+
+
+
+
+
+
 
   case "obtener":
   $id = intval($_GET["id"] ?? 0);
@@ -122,6 +158,7 @@ switch ($accion) {
       <th>Fecha</th>
       <th>Estado</th>
       <th>Tratamientos aplicados</th>
+      <th>Veterinarios asignados</th>
       <th>Acciones</th>
     </tr>";
 
@@ -141,26 +178,68 @@ switch ($accion) {
     }
     $procsStr = implode(", ", $trs);
 
+
+ $idCampana = $row['idCampanas'];
+
+// Obtener veterinarios asignados a esta campaña
+$veterinariosAsignados = [];
+$sqlVet = "SELECT 
+  p.nombres,
+  p.apell1,
+  p.apell2
+FROM 
+  veterinarios v
+JOIN 
+  personas p ON v.personas_id = p.idPersona;
+;
+";
+
+$resVet = $conn->query($sqlVet);
+while ($vet = $resVet->fetch_assoc()) {
+    $veterinariosAsignados[] = $vet['nombres'] . ' ' . $vet['apell1'] . ' ' . $vet['apell2'];
+}
+
+$veterinariosStr = implode(", ", $veterinariosAsignados);
+
+// Ahora sí:
+
+
+
     echo "<tr class='$claseFila'>
       <td>{$row['nombre_campana']}</td>
       <td>{$row['lugar_campana']}</td>
       <td>{$row['fecha_campana']}</td>
       <td>$estadoTexto</td>
       <td>$procsStr</td>
+      <td>$veterinariosStr</td>
+
       <td>
         <button onclick='editarCampania($idCampana)'>Editar</button>
         <button onclick='eliminarCampania($idCampana)'>Eliminar</button>
       </td>
     </tr>";
+
+
+
+
+    
   }
+
 
   echo "</table>";
   break;
 
 
+  
+
+
   default:
     echo "<p>⚠️ Acción no válida.</p>";
+
+
+    
 }
 
 $conn->close();
 ?>
+

@@ -4,9 +4,23 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Menú Principal</title>
+
+  <!-- Estilos base -->
   <link rel="stylesheet" href="styles.css" />
-  
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" />
+
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
   <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #e0f7fa;
+    }
+
     .main-title {
       font-size: 3rem;
       color: white;
@@ -19,6 +33,7 @@
       justify-content: center;
       gap: 30px;
       flex-wrap: wrap;
+      margin-bottom: 40px;
     }
 
     .menu-button {
@@ -57,43 +72,113 @@
       z-index: 2;
       text-align: center;
     }
+
+    .cerrar-sesion-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .cerrar-sesion-btn {
+      background-color: #dc3545;
+      color: white;
+      padding: 12px 28px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      transition: all 0.3s ease;
+      display: inline-block;
+    }
+
+    .cerrar-sesion-btn:hover {
+      background-color: #c82333;
+      transform: scale(1.05);
+    }
   </style>
+
+  <script>
+    // Verificación de sesión
+    (async function verificarSesion() {
+      try {
+        const res = await fetch('verificar_sesion.php');
+        const data = await res.json();
+        if (!data.autenticado) {
+          Swal.fire({
+            title: '⚠️ Sesión no válida',
+            text: 'Debes iniciar sesión para acceder.',
+            icon: 'warning',
+            confirmButtonText: 'Ok'
+          }).then(() => {
+            window.location.href = 'index.html';
+          });
+        }
+      } catch (err) {
+        console.error('Error al verificar sesión:', err);
+        Swal.fire({
+          title: 'Error de sesión',
+          text: 'No se pudo verificar tu sesión. Redireccionando...',
+          icon: 'error',
+          confirmButtonText: 'Continuar'
+        }).then(() => {
+          window.location.href = 'index.html';
+        });
+      }
+    })();
+
+    // Confirmar cierre de sesión
+    function confirmarSalida(event) {
+      event.preventDefault();
+      Swal.fire({
+        title: '¿Cerrar sesión?',
+        text: 'Tu sesión será cerrada.',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, cerrar sesión',
+        cancelButtonText: 'Cancelar'
+      }).then((resultado) => {
+        if (resultado.isConfirmed) {
+          window.location.href = 'cerrar_sesion.php';
+        }
+      });
+    }
+  </script>
 </head>
+
 <body>
   <div class="background">
     <div class="overlay"></div>
     <div class="center-box">
-        <img src="imagenes/logo2muni.png" alt="Logo" style="width:450px; height:auto; margin-bottom: 
-        20px;" />
+      <img src="imagenes/logo2muni.png" alt="Logo" style="width:450px; height:auto; margin-bottom: 20px;" />
       <div class="main-title">Sub-Gerencia de Sanidad y Salubridad Pública</div>
-<!-- box-shadow: 5px 5px 15px rgba(100, 0, 0, 0.5) --> 
+
       <div class="menu-buttons">
-  <a href="registro_personas.html" class="menu-button">
-    <img src="imagenes/registro.png" alt="Icono 1" />
-    Registrar Propietario o Veterinario
-  </a>
-  <a href="registro_mascotas.html" class="menu-button">
-    <img src="imagenes/registro (1).png" alt="Icono 2" />
-    Registro de Mascotas
-  </a>
-  <a href="interfaz_campaña.html" class="menu-button">
-    <img src="imagenes/votacion.png" alt="Icono 3" />
-    Registro/creacion de Campañas
-  </a>
-  <a href="registro_medicamentos.html" class="menu-button">
-    <img src="imagenes/registro (2).png" alt="Icono 4" />
-   Registro de Medicamentos
-  </a>
-  <a href="" class="menu-button">
-    <img src="imagenes/seguimiento.png" alt="Icono 5" />
-   Registrar Seguimiento
-  </a>
-  <a href="registro_ficha.html" class="menu-button">
-    <img src="imagenes/seguimiento.png" alt="Icono 5" />
-   Registrar Ficha
-  </a>
+        <a href="registro_personas.html" class="menu-button">
+          <img src="imagenes/registro.png" alt="Icono 1" />
+          Registrar Propietario o Veterinario
+        </a>
+        <a href="registro_mascotas.html" class="menu-button">
+          <img src="imagenes/registro (1).png" alt="Icono 2" />
+          Registro de Mascotas
+        </a>
+        <a href="interfaz_campaña.html" class="menu-button">
+          <img src="imagenes/votacion.png" alt="Icono 3" />
+          Registro/Creación de Campañas
+        </a>
+        <a href="registro_medicamentos.html" class="menu-button">
+          <img src="imagenes/registro (2).png" alt="Icono 4" />
+          Registro de Medicamentos
+        </a>
+        <a href="registro_ficha.html" class="menu-button">
+          <img src="imagenes/seguimiento.png" alt="Icono 5" />
+          Registrar Ficha
+        </a>
+      </div>
 
-
+      <div class="cerrar-sesion-container">
+        <a href="#" onclick="confirmarSalida(event)" class="cerrar-sesion-btn">
+          <i class="fas fa-door-open"></i> Cerrar Sesión
+        </a>
       </div>
     </div>
   </div>

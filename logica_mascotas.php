@@ -127,10 +127,10 @@ if ($accion === "crear" || $accion === "editar") {
         error_log("✏️ Editando mascota ID: $id");
         if ($foto !== "") {
             $stmt = $conn->prepare("UPDATE mascotas SET nombreMascota=?, idEspecie=?, idGenero=?, edad_mascotas=?, color=?, idcomportamientos=?, foto=? WHERE idMascota=?");
-            $stmt->bind_param("siiiissi", $nombre, $especie, $genero, $edad, $color, $comportamiento, $foto, $id);
+            $stmt->bind_param("siiisssi", $nombre, $especie, $genero, $edad, $color, $comportamiento, $foto, $id);
         } else {
             $stmt = $conn->prepare("UPDATE mascotas SET nombreMascota=?, idEspecie=?, idGenero=?, edad_mascotas=?, color=?, idcomportamientos=? WHERE idMascota=?");
-            $stmt->bind_param("siiiisi", $nombre, $especie, $genero, $edad, $color, $comportamiento, $id);
+            $stmt->bind_param("siiissi", $nombre, $especie, $genero, $edad, $color, $comportamiento, $id);
         }
         $stmt->execute();
         if ($stmt->error) {
@@ -150,8 +150,9 @@ if ($accion === "obtener") {
     $id  = intval($_GET["id"]);
     $res = $conn->query("SELECT * FROM mascotas WHERE idMascota = $id");
     $m   = $res->fetch_assoc();
+
     // Traer DNI del propietario
-    $res2      = $conn->query(
+    $res2 = $conn->query(
         "SELECT pe.dni
          FROM propietarios_has_mascotas pm
          JOIN propietarios p ON p.idPropietarios = pm.propietarios_idPropietarios
@@ -159,9 +160,14 @@ if ($accion === "obtener") {
          WHERE pm.mascotas_idMascota = $id"
     );
     $m["dni"] = $res2->fetch_assoc()["dni"] ?? "";
+
+    // 🐾 Verificar valor de color antes de enviar
+    error_log("🐾 Color enviado para edición: " . $m["color"]);
+
     echo json_encode($m);
     exit;
 }
+
 
 // 5) Eliminar mascota + foto
 if ($accion === "eliminar") {

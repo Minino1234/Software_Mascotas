@@ -4,47 +4,132 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login - Software Mascotas</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" />
+
+  <!-- Animate.css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <!-- Tu hoja de estilos -->
   <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    body {
+      font-family: 'Nunito', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #e0f7fa;
+    }
+
+    .background {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .login-box {
+      background-color: #ffffff;
+      padding: 40px 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 25px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .login-box h2 {
+      margin-bottom: 25px;
+      color: #00796b;
+    }
+
+    .login-box input {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 18px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    .login-box button {
+      width: 100%;
+      padding: 12px;
+      background-color: #00796b;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .login-box button:hover {
+      background-color: #004d40;
+    }
+
+    .login-box i {
+      color: #00796b;
+      margin-right: 8px;
+    }
+  </style>
 </head>
 <body>
   <div class="background">
-    <div class="overlay"></div>
-    <div class="login-box">
-      <h2>Iniciar Sesión</h2>
+    <div class="login-box animate__animated animate__fadeIn">
+      <h2><i class="fas fa-paw"></i> Iniciar Sesión</h2>
+
       <form id="loginForm">
-  <input type="text" name="usuario" placeholder="Usuario" required />
-  <input type="password" name="clave" placeholder="Contraseña" required />
-  <button type="submit">Ingresar</button>
-</form>
-
-<div id="mensaje"></div>
-
-<script>
-  const form = document.getElementById("loginForm");
-  const mensaje = document.getElementById("mensaje");
-
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const datos = new FormData(form);
-
-    const res = await fetch("login.php", {
-      method: "POST",
-      body: datos,
-    });
-
-    const texto = await res.text();
-
-    if (texto.trim() === "success") {
-      window.location.href = "main_menu.html"; // CAMBIA ESTO A TU INTERFAZ
-    } else {
-      mensaje.innerHTML = `<p style="color:red;">${texto}</p>`;
-    }
-  });
-</script>
+        <input type="text" name="usuario" placeholder="👤 Usuario" required />
+        <input type="password" name="clave" placeholder="🔒 Contraseña" required />
+        <button type="submit">Ingresar</button>
+      </form>
     </div>
   </div>
+
+  <script>
+    const form = document.getElementById("loginForm");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const datos = new FormData(form);
+      const res = await fetch("login.php", {
+        method: "POST",
+        body: datos,
+      });
+
+      const texto = await res.text();
+
+      if (texto.trim() === "success") {
+        Swal.fire({
+          title: '¡Bienvenido!',
+          text: 'Redireccionando al menú...',
+          icon: 'success',
+          timer: 1500,
+          showConfirmButton: false
+        });
+        setTimeout(() => {
+          window.location.href = "main_menu.html";
+        }, 1500);
+      } else {
+        Swal.fire({
+          title: 'Error de inicio',
+          text: texto,
+          icon: 'error',
+          confirmButtonText: 'Intentar de nuevo'
+        });
+      }
+    });
+  </script>
 </body>
 </html>
-
-
