@@ -397,33 +397,6 @@
     seleccionados.delete(nombre);
     $(`#tablaProcedimientos tbody tr[data-nombre="${nombre}"]`).remove();
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  
-
   function cargarProcedimientos() {
     $.get("logica_campaña.php", { accion: "listar_procedimientos" }, function (data) {
       const procs = JSON.parse(data);
